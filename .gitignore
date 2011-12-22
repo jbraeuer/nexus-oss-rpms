@@ -1,0 +1,8 @@
+BUILD
+BUILDROOT
+RPMS
+*~
+\#*
+.\#*
+SOURCES/*.tar.gz
+tmp

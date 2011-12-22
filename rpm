@@ -1,0 +1,20 @@
+#! /bin/bash
+
+usage() {
+    echo "$0 - a script to build nexus-oss rpms"
+    echo "Usage: $0 <spec>"
+}
+
+if [ -z "$1" ]; then
+    usage
+    exit 1
+fi
+
+readonly SPEC="$(readlink -f "$1")"
+readonly BASEDIR="$(dirname $(readlink -f "$0"))"
+
+mkdir -p ${BASEDIR}/{BUILD,BUILDROOT,RPMS}
+rpmbuild --verbose \
+    --define "_topdir ${BASEDIR}" \
+    --define "_rpmdir ${BASEDIR}/RPMS" \
+    -bb "${SPEC}"
