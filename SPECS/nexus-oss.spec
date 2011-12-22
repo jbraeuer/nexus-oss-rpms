@@ -10,6 +10,8 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires: jdk
 AutoReqProv: no
 
+%define __os_install_post %{nil}
+
 %description
 A package repository
 
