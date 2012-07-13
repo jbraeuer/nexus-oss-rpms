@@ -34,7 +34,7 @@ mkdir -p $RPM_BUILD_ROOT/etc/
 ln -sf /usr/share/%{name}/conf $RPM_BUILD_ROOT/etc/nexus
 
 # patch work dir
-sed -i -e 's#nexus-work=.*#nexus-work=/var/lib/nexus/#g' $RPM_BUILD_ROOT/usr/share/%{name}/conf/plexus.properties
+sed -i -e 's#nexus-work=.*#nexus-work=/var/lib/nexus/#g' $RPM_BUILD_ROOT/usr/share/%{name}/conf/nexus.properties
 mkdir -p $RPM_BUILD_ROOT/var/lib/nexus
 
 # patch tcp port
