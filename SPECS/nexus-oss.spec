@@ -1,11 +1,11 @@
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
-Name: nexus-oss
-Version: 1.9.2.3
+Name: nexus
+Version: 2.0.6
 Release: 1
 License: AGPL
 Group: unknown
 URL: http://nexus.sonatype.org/
-Source0: %{name}-webapp-%{version}-bundle.tar.gz
+Source0: %{name}-%{version}-bundle.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires: jdk
 AutoReqProv: no
@@ -60,6 +60,8 @@ rm -rf $RPM_BUILD_ROOT
 /var/log/nexus
 
 %changelog
+* Thu Jul 13 2012 Mike Champion <mike.champion@gmail.com> - 2.0.6
+- Upgrade to 2.0.6
 * Thu Dec 22 2011 Jens Braeuer <braeuer.jens@googlemail.com> - 1.9.2.3-1
 - Initial packaging.
 - For now nexus will run as root and listen to port 80

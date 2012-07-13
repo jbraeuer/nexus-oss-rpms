@@ -2,7 +2,7 @@ This repository holds files and scripts to build a Sonatype Nexus .rpm
 package.
 
 # Ingredients
-- Nexus OSS 1.9.2.3: from http://nexus.sonatype.com
+- Nexus OSS 2.0.6: from http://nexus.sonatype.com
 
 # Licenses
 - Nexus OSS: AGPL, Sonatype
