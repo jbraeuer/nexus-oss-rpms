@@ -38,7 +38,7 @@ sed -i -e 's#nexus-work=.*#nexus-work=/var/lib/nexus/#g' $RPM_BUILD_ROOT/usr/sha
 mkdir -p $RPM_BUILD_ROOT/var/lib/nexus
 
 # patch tcp port
-sed -i -e 's#application-port=.*#application-port=80#g' $RPM_BUILD_ROOT/usr/share/%{name}/conf/plexus.properties
+#sed -i -e 's#application-port=.*#application-port=80#g' $RPM_BUILD_ROOT/usr/share/%{name}/conf/plexus.properties
 
 # patch pid dir
 sed -i -e 's#PIDDIR=.*#PIDDIR=/var/run/#' $RPM_BUILD_ROOT/usr/share/%{name}/bin/jsw/linux-$arch/nexus
