@@ -7,7 +7,6 @@ Group: unknown
 URL: http://nexus.sonatype.org/
 Source0: %{name}-%{version}-bundle.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
-Requires: jdk
 AutoReqProv: no
 
 %define __os_install_post %{nil}
