@@ -7,7 +7,6 @@ Group: unknown
 URL: http://nexus.sonatype.org/
 Source0: %{name}-%{version}-bundle.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
-BuildArch:	x86_64
 Requires: jdk
 AutoReqProv: no
 
@@ -27,6 +26,7 @@ mkdir -p $RPM_BUILD_ROOT/usr/share/%{name}
 mv * $RPM_BUILD_ROOT/usr/share/%{name}
 
 arch=$(echo "%{_arch}" | sed -e 's/_/-/')
+arch="x86_64"
 mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d/
 cd $RPM_BUILD_ROOT/etc/rc.d/init.d/
 ln -sf /usr/share/%{name}/bin/jsw/linux-$arch/nexus $RPM_BUILD_ROOT/etc/rc.d/init.d/
@@ -42,7 +42,7 @@ mkdir -p $RPM_BUILD_ROOT/var/lib/nexus
 #sed -i -e 's#application-port=.*#application-port=80#g' $RPM_BUILD_ROOT/usr/share/%{name}/conf/plexus.properties
 
 # patch pid dir
-sed -i -e 's#PIDDIR=.*#PIDDIR=/var/run/#' $RPM_BUILD_ROOT/usr/share/%{name}/bin/jsw/linux-%{buildarch}/nexus
+sed -i -e 's#PIDDIR=.*#PIDDIR=/var/run/#' $RPM_BUILD_ROOT/usr/share/%{name}/bin/jsw/linux-$arch/nexus
 
 # patch logfile
 mkdir -p $RPM_BUILD_ROOT/var/log/nexus
