@@ -16,7 +16,7 @@ AutoReqProv: no
 A package repository
 
 %prep
-%setup -q -n %{name}-webapp-%{version}
+%setup -q -n %{name}-%{version}
 
 %build
 
