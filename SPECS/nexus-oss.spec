@@ -9,6 +9,7 @@ Source0: %{name}-%{version}-%{release}-bundle.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 BuildArch: noarch
 AutoReqProv: no
+Patch0: nexus_initd.patch
 
 %define __os_install_post %{nil}
 
@@ -17,6 +18,7 @@ A package repository
 
 %prep
 %setup -q -n %{name}-%{version}-%{release}
+%patch0 -p1
 
 %build
 
@@ -36,14 +38,9 @@ ln -sf /usr/share/%{name}/conf $RPM_BUILD_ROOT/etc/nexus
 sed -i -e 's#nexus-work=.*#nexus-work=/var/lib/nexus/#g' $RPM_BUILD_ROOT/usr/share/%{name}/conf/nexus.properties
 mkdir -p $RPM_BUILD_ROOT/var/lib/nexus
 
-# patch tcp port
-#sed -i -e 's#application-port=.*#application-port=80#g' $RPM_BUILD_ROOT/usr/share/%{name}/conf/plexus.properties
-
 # patch pid dir
 sed -i -e 's#PIDDIR=.*#PIDDIR=/var/run#' $RPM_BUILD_ROOT/usr/share/%{name}/bin/nexus
 sed -i -e 's/#RUN_AS_USER=.*/RUN_AS_USER=nexus/' $RPM_BUILD_ROOT/usr/share/%{name}/bin/nexus 
-# Patch the script so that user would not need tty
-sed -i -e 's/su - \$RUN_AS_USER -c \"\\"$REALPATH\\" \$2"/touch \$PIDFILE; chown \$RUN_AS_USER:\$RUN_AS_GROUP \$PIDFILE; sudo -u \$RUN_AS_USER \$REALPATH \$2/' $RPM_BUILD_ROOT/usr/share/%{name}/bin/nexus
 
 # patch logfile
 mkdir -p $RPM_BUILD_ROOT/var/log/nexus
@@ -67,10 +64,17 @@ getent passwd nexus >/dev/null || \
     useradd -r -g nexus -d /usr/share/%{name} -s /sbin/nologin \
     -c "Nexus OSS" nexus
 
+%post
+service nexus start
+
+%preun
+service nexus stop
+
 %changelog
 * Mon Jul 8 2013 Ilja Bobkevic <ilja.bobkevic@gmail.com>
 - Addopt spec for external verison and release definition
 - Use nexus credentials for the daemon
+- Patch init.d script with proper headers and to use sudo instead su
 * Thu Jul 13 2012 Mike Champion <mike.champion@gmail.com> - 2.0.6
 - Upgrade to 2.0.6
 * Thu Dec 22 2011 Jens Braeuer <braeuer.jens@googlemail.com> - 1.9.2.3-1
