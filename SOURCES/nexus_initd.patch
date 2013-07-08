@@ -1,0 +1,35 @@
+--- nexus-2.5.1-01/bin/nexus.orig	2013-06-28 19:26:12.000000000 +0000
++++ nexus-2.5.1-01/bin/nexus	2013-07-08 13:48:29.951546295 +0000
+@@ -1,4 +1,21 @@
+ #! /bin/sh
++# 
++# nexu Startup script for Nexus OSS
++#
++# chkconfig: 2345 98 02
++# description: Nexus OSS daemon
++
++### BEGIN INIT INFO
++# Provides: nexus
++# Required-Start: $local_fs $network $remote_fs
++# Required-Stop: $local_fs $network $remote_fs
++# Should-Start: $named $time
++# Should-Stop: $named $time
++# Default-Start: 2 3 4 5
++# Default-Stop: 0 1 6
++# Short-Description: Startup script for the Nexus OSS
++# Description: Nexus OSS daemon
++### END INIT INFO
+ 
+ #
+ # Copyright (c) 1999, 2006 Tanuki Software Inc.
+@@ -289,7 +306,9 @@
+     
+             # Still want to change users, recurse.  This means that the user will only be
+             #  prompted for a password once. Variables shifted by 1
+-            su - $RUN_AS_USER -c "\"$REALPATH\" $2"
++            touch $PIDFILE
++            chown $RUN_AS_USER:$RUN_AS_GROUP $PIDFILE
++            sudo -u $RUN_AS_USER $REALPATH $2
+     
+             # Now that we are the original user again, we may need to clean up the lock file.
+             if [ "X$LOCKPROP" != "X" ]
