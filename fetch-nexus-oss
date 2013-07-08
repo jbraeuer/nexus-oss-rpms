@@ -1,11 +1,11 @@
 #! /bin/bash
 
-# http://www.sonatype.org/downloads/nexus-2.0.6-bundle.tar.gz
 readonly BASEDIR="$(dirname $(readlink -f "$0"))"
 readonly BASEURL="http://www.sonatype.org/downloads"
-readonly BINARY="nexus-2.0.6-bundle.tar.gz"
+readonly BINARY="nexus-latest-bundle.tar.gz"
 
 set -e
 mkdir -p "${BASEDIR}/SOURCES/"
 cd "${BASEDIR}/SOURCES/"
 wget "${BASEURL}/${BINARY}"
+

@@ -13,8 +13,17 @@ fi
 readonly SPEC="$(readlink -f "$1")"
 readonly BASEDIR="$(dirname $(readlink -f "$0"))"
 
+# Get downloaded file name
+stringZ=`ls ${BASEDIR}/SOURCES/nexus-*-bundle.tar.gz`
+# Parse version code
+verrel=`expr match "$stringZ" '.*nexus-\(.*\)-bundle\.tar\.gz'`
+# Sepearate version from release digits
+IFS='-' read -a verarr <<< "$verrel"
+
 mkdir -p ${BASEDIR}/{BUILD,BUILDROOT,RPMS}
 rpmbuild --verbose \
     --define "_topdir ${BASEDIR}" \
     --define "_rpmdir ${BASEDIR}/RPMS" \
+    --define "version ${verarr[0]}" \
+    --define "release ${verarr[1]}" \
     -bb "${SPEC}"

@@ -1,12 +1,13 @@
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus
-Version: 2.0.6
-Release: 1
+Version: %{version}
+Release: %{release}
 License: AGPL
 Group: unknown
 URL: http://nexus.sonatype.org/
-Source0: %{name}-%{version}-bundle.tar.gz
+Source0: %{name}-%{version}-%{release}-bundle.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
+BuildArch: noarch
 AutoReqProv: no
 
 %define __os_install_post %{nil}
@@ -15,7 +16,7 @@ AutoReqProv: no
 A package repository
 
 %prep
-%setup -q -n %{name}-%{version}
+%setup -q -n %{name}-%{version}-%{release}
 
 %build
 
@@ -24,11 +25,9 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/share/%{name}
 mv * $RPM_BUILD_ROOT/usr/share/%{name}
 
-arch=$(echo "%{_arch}" | sed -e 's/_/-/')
-arch="x86-64"
 mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d/
 cd $RPM_BUILD_ROOT/etc/rc.d/init.d/
-ln -sf /usr/share/%{name}/bin/jsw/linux-$arch/nexus $RPM_BUILD_ROOT/etc/rc.d/init.d/
+ln -sf /usr/share/%{name}/bin/nexus $RPM_BUILD_ROOT/etc/rc.d/init.d/
 
 mkdir -p $RPM_BUILD_ROOT/etc/
 ln -sf /usr/share/%{name}/conf $RPM_BUILD_ROOT/etc/nexus
@@ -41,7 +40,10 @@ mkdir -p $RPM_BUILD_ROOT/var/lib/nexus
 #sed -i -e 's#application-port=.*#application-port=80#g' $RPM_BUILD_ROOT/usr/share/%{name}/conf/plexus.properties
 
 # patch pid dir
-sed -i -e 's#PIDDIR=.*#PIDDIR=/var/run/#' $RPM_BUILD_ROOT/usr/share/%{name}/bin/jsw/linux-$arch/nexus
+sed -i -e 's#PIDDIR=.*#PIDDIR=/var/run#' $RPM_BUILD_ROOT/usr/share/%{name}/bin/nexus
+sed -i -e 's/#RUN_AS_USER=.*/RUN_AS_USER=nexus/' $RPM_BUILD_ROOT/usr/share/%{name}/bin/nexus 
+# Patch the script so that user would not need tty
+sed -i -e 's/su - \$RUN_AS_USER -c \"\\"$REALPATH\\" \$2"/touch \$PIDFILE; chown \$RUN_AS_USER:\$RUN_AS_GROUP \$PIDFILE; sudo -u \$RUN_AS_USER \$REALPATH \$2/' $RPM_BUILD_ROOT/usr/share/%{name}/bin/nexus
 
 # patch logfile
 mkdir -p $RPM_BUILD_ROOT/var/log/nexus
@@ -51,7 +53,7 @@ sed -i -e 's#wrapper.logfile=.*#wrapper.logfile=/var/log/nexus/nexus.log#' $RPM_
 rm -rf $RPM_BUILD_ROOT
 
 %files
-%defattr(-,root,root,-)
+%defattr(-,nexus,nexus,-)
 %doc
 /usr/share/%{name}
 /etc/rc.d/init.d/nexus
@@ -59,7 +61,16 @@ rm -rf $RPM_BUILD_ROOT
 /var/lib/nexus
 /var/log/nexus
 
+%pre
+getent group nexus >/dev/null || groupadd -r nexus
+getent passwd nexus >/dev/null || \
+    useradd -r -g nexus -d /usr/share/%{name} -s /sbin/nologin \
+    -c "Nexus OSS" nexus
+
 %changelog
+* Mon Jul 8 2013 Ilja Bobkevic <ilja.bobkevic@gmail.com>
+- Addopt spec for external verison and release definition
+- Use nexus credentials for the daemon
 * Thu Jul 13 2012 Mike Champion <mike.champion@gmail.com> - 2.0.6
 - Upgrade to 2.0.6
 * Thu Dec 22 2011 Jens Braeuer <braeuer.jens@googlemail.com> - 1.9.2.3-1
