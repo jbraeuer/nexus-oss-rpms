@@ -1,8 +1,8 @@
 #! /bin/bash
 
 readonly BASEDIR="$(dirname $(readlink -f "$0"))"
-readonly BASEURL="http://nexus.sonatype.org/downloads"
-readonly BINARY="nexus-oss-webapp-1.9.2.3-bundle.tar.gz"
+readonly BASEURL="http://www.sonatype.org/downloads/"
+readonly BINARY="nexus-2.11.3-01-bundle.tar.gz"
 
 set -e
 mkdir -p "${BASEDIR}/SOURCES/"

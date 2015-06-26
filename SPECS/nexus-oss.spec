@@ -1,13 +1,14 @@
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
-Name: nexus-oss
-Version: 1.9.2.3
-Release: 1
+Name: nexus
+Version: 2.11.3
+Release: 01
 License: AGPL
 Group: unknown
 URL: http://nexus.sonatype.org/
-Source0: %{name}-webapp-%{version}-bundle.tar.gz
+Source0: %{name}-%{version}-%{release}-bundle.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
-Requires: jdk
+Requires(pre): /usr/sbin/useradd, /usr/bin/getent
+Requires(postun): /usr/sbin/userdel
 AutoReqProv: no
 
 %define __os_install_post %{nil}
@@ -16,36 +17,44 @@ AutoReqProv: no
 A package repository
 
 %prep
-%setup -q -n %{name}-webapp-%{version}
+%setup -q -n %{name}-%{version}-%{release}
 
 %build
+
+%pre
+/usr/bin/getent passwd nexus || /usr/sbin/useradd -r -d /var/lib/nexus -s /bin/bash nexus
 
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/share/%{name}
 mv * $RPM_BUILD_ROOT/usr/share/%{name}
 
+
 arch=$(echo "%{_arch}" | sed -e 's/_/-/')
 mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d/
 cd $RPM_BUILD_ROOT/etc/rc.d/init.d/
-ln -sf /usr/share/%{name}/bin/jsw/linux-$arch/nexus $RPM_BUILD_ROOT/etc/rc.d/init.d/
+ln -sf /usr/share/%{name}/bin/nexus $RPM_BUILD_ROOT/etc/rc.d/init.d/
 
 mkdir -p $RPM_BUILD_ROOT/etc/
 ln -sf /usr/share/%{name}/conf $RPM_BUILD_ROOT/etc/nexus
 
 # patch work dir
-sed -i -e 's#nexus-work=.*#nexus-work=/var/lib/nexus/#g' $RPM_BUILD_ROOT/usr/share/%{name}/conf/plexus.properties
+sed -i -e 's/nexus-work=.*/nexus-work=\/var\/lib\/nexus\//' $RPM_BUILD_ROOT/usr/share/%{name}/conf/nexus.properties
 mkdir -p $RPM_BUILD_ROOT/var/lib/nexus
 
-# patch tcp port
-sed -i -e 's#application-port=.*#application-port=80#g' $RPM_BUILD_ROOT/usr/share/%{name}/conf/plexus.properties
-
 # patch pid dir
-sed -i -e 's#PIDDIR=.*#PIDDIR=/var/run/#' $RPM_BUILD_ROOT/usr/share/%{name}/bin/jsw/linux-$arch/nexus
+sed -i -e 's/PIDDIR=.*/PIDDIR=\/var\/run\/nexus/' $RPM_BUILD_ROOT/usr/share/%{name}/bin/nexus
+mkdir -p $RPM_BUILD_ROOT/var/run/nexus
+
+# Patch user
+sed -i -e 's/#RUN_AS_USER=.*/RUN_AS_USER=nexus/' $RPM_BUILD_ROOT/usr/share/%{name}/bin/nexus
 
 # patch logfile
 mkdir -p $RPM_BUILD_ROOT/var/log/nexus
-sed -i -e 's#wrapper.logfile=.*#wrapper.logfile=/var/log/nexus/nexus.log#' $RPM_BUILD_ROOT/usr/share/%{name}/bin/jsw/conf/wrapper.conf
+sed -i -e 's/wrapper.logfile=.*/wrapper.logfile=\/var\/log\/nexus\/nexus.log/' $RPM_BUILD_ROOT/usr/share/%{name}/bin/jsw/conf/wrapper.conf
+
+%postun
+/usr/sbin/userdel nexus
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -55,11 +64,20 @@ rm -rf $RPM_BUILD_ROOT
 %doc
 /usr/share/%{name}
 /etc/rc.d/init.d/nexus
-/etc/nexus
-/var/lib/nexus
-/var/log/nexus
+%attr(-,nexus,nexus) /etc/nexus
+%attr(-,nexus,nexus) /var/lib/nexus
+%attr(-,nexus,nexus) /var/log/nexus
+%attr(-,nexus,nexus) /var/run/nexus
+%attr(-,nexus,nexus) /usr/share/%{name}
 
 %changelog
+* Fri Jun 26 2015 Julio Gonzalez <git@juliogonzalez.es> - 2.11.3-01
+- Update to last version available
+- Nexus will now listen at 8081 (this can be modified at
+  /etc/nexus/nexus.properties)
+- Nexus runs now without as system user, not as root
+- Remove jdk dependency (no virtual package at CentOS 7)
+
 * Thu Dec 22 2011 Jens Braeuer <braeuer.jens@googlemail.com> - 1.9.2.3-1
 - Initial packaging.
 - For now nexus will run as root and listen to port 80
