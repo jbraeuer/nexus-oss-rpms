@@ -1,3 +1,5 @@
+[![Build Status](https://jenkins-juliogonzalez.rhcloud.com/job/nexus-oss-rpm-build/badge/icon)](https://jenkins-juliogonzalez.rhcloud.com/job/nexus-oss-rpm-build/)
+
 This repository holds files and scripts to build a Sonatype Nexus .rpm
 package.
 
