@@ -2,7 +2,7 @@
 
 readonly BASEDIR="$(dirname $(readlink -f "$0"))"
 readonly BASEURL="http://www.sonatype.org/downloads/"
-readonly BINARY="nexus-2.11.3-01-bundle.tar.gz"
+readonly BINARY="nexus-2.11.4-01-bundle.tar.gz"
 
 set -e
 mkdir -p "${BASEDIR}/SOURCES/"
