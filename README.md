@@ -5,7 +5,7 @@ package.
 
 # Ingredients
 
-- Nexus OSS 2.11.4-01: from http://www.sonatype.org/nexus/
+- Nexus OSS 2.12.0-01: from http://www.sonatype.org/nexus/
 
 # Licenses
 
