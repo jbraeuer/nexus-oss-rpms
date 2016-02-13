@@ -1,6 +1,7 @@
 BUILD
 BUILDROOT
 RPMS
+SRPMS
 *~
 \#*
 .\#*
