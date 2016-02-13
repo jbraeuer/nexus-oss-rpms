@@ -1,0 +1,41 @@
+#!/bin/bash
+
+SCRIPT=$(basename ${0})
+VERSION="2.11.4-01"
+
+function check_create_dir() {
+  if [ ! -d "./${1}" ]; then
+    mkdir "./${1}"
+  fi
+}
+
+function create_build_env() {
+  check_create_dir BUILD
+  check_create_dir BUILDROOT
+  check_create_dir RPMS
+  check_create_dir SOURCES
+  check_create_dir SPECS
+  check_create_dir SRPMS
+}
+
+function get_sources() {
+  if [ ! -f "./SOURCES/nexus-${1}-bundle.tar.gz" ]; then
+    wget "http://www.sonatype.org/downloads/nexus-${1}-bundle.tar.gz" -O "./SOURCES/nexus-${1}-bundle.tar.gz"
+  fi
+}
+
+function build_rpm() {
+  rpmbuild --define "_topdir `pwd`" -ba "SPECS/nexus-oss.spec"
+  return ${?}
+}
+
+create_build_env
+get_sources ${VERSION}
+build_rpm
+if [ $? -eq 0 ]; then
+  echo Your packages are available at $PWD/RPMS.
+  exit 0
+else
+  echo There are errors. Check your log.
+  exit 1
+fi

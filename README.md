@@ -28,13 +28,9 @@ package.
 
 # How to build
 
-- fetch Nexus OSS tar.gz:
+Run:
 ```
-./fetch-nexus-oos
-```
-- build RPM:
-```
-./rpm SPECS/nexus-oss.spec
+./nexus-oss-rpm
 ```
 
 # Daemon
