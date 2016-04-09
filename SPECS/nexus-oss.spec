@@ -62,7 +62,6 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %doc
-/usr/share/%{name}
 /etc/rc.d/init.d/nexus
 %attr(-,nexus,nexus) /etc/nexus
 %attr(-,nexus,nexus) /var/lib/nexus
