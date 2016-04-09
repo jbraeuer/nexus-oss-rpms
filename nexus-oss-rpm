@@ -1,7 +1,20 @@
 #!/bin/bash
 
 SCRIPT=$(basename ${0})
-VERSION="2.12.0-01"
+
+help() {
+  echo ""
+  echo "Script to build Sonatype Nexus OSS RPMs"
+  echo ""
+  echo "Syntax: "
+  echo ""
+  echo "${SCRIPT} [-v <MAJOR_VERSION>]"
+  echo ""
+  echo "Where: "
+  echo "  -v  Sonatype Nexus OSS major version (currently 2 or 3 supported)."
+  echo "      2 is default if parameter is not present"
+  echo ""
+}
 
 function check_create_dir() {
   if [ ! -d "./${1}" ]; then
@@ -19,19 +32,43 @@ function create_build_env() {
 }
 
 function get_sources() {
-  if [ ! -f "./SOURCES/nexus-${1}-bundle.tar.gz" ]; then
-    wget "http://www.sonatype.org/downloads/nexus-${1}-bundle.tar.gz" -O "./SOURCES/nexus-${1}-bundle.tar.gz"
+  if [ ! -f "./SOURCES/${2}" ]; then
+    wget "${1}" -O "./SOURCES/${2}"
   fi
 }
 
 function build_rpm() {
-  rpmbuild --define "_topdir `pwd`" -ba "SPECS/nexus-oss.spec"
+  rpmbuild --define "_topdir `pwd`" -ba "SPECS/${1}"
   return ${?}
 }
 
+while getopts ":v:h" opts; do
+  case "${opts}" in
+    v) VERSION=${OPTARG};;
+    h) help
+       exit 0;;
+    *) echo "Invalid syntax. Use ${SCRIPT} -h"
+       exit 1;;
+  esac
+done
+shift $((OPTIND-1))
+
+case ${VERSION} in
+  3) VERSION="3.0.0-03"
+     URL="http://download.sonatype.com/nexus/3/nexus-${VERSION}-unix.tar.gz"
+     TGZ="nexus3-${VERSION}-unix.tar.gz"
+     SPECS='nexus3-oss.spec';;
+  2|'') VERSION="2.12.0-01"
+        URL="http://www.sonatype.org/downloads/nexus-${VERSION}-bundle.tar.gz"
+        TGZ="nexus-${VERSION}-bundle.tar.gz"
+        SPECS='nexus-oss.spec';;
+  *) echo "Invalid version. Use ${SCRIPT} -h"
+     exit 1;;
+esac
+
 create_build_env
-get_sources ${VERSION}
-build_rpm
+get_sources ${URL} ${TGZ}
+build_rpm ${SPECS}
 if [ $? -eq 0 ]; then
   echo Your packages are available at $PWD/RPMS.
   exit 0
