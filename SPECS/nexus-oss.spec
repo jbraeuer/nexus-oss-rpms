@@ -29,8 +29,6 @@ rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/share/%{name}
 mv * $RPM_BUILD_ROOT/usr/share/%{name}
 
-
-arch=$(echo "%{_arch}" | sed -e 's/_/-/')
 mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d/
 cd $RPM_BUILD_ROOT/etc/rc.d/init.d/
 ln -sf /usr/share/%{name}/bin/nexus $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
