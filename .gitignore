@@ -6,4 +6,5 @@ SRPMS
 \#*
 .\#*
 SOURCES/*.tar.gz
+SOURCES/nexus*/
 tmp
