@@ -22,7 +22,7 @@ A package repository
 %build
 
 %pre
-/usr/bin/getent passwd nexus || /usr/sbin/useradd -r -d /var/lib/nexus -s /bin/bash nexus
+/usr/bin/getent passwd %{name} || /usr/sbin/useradd -r -d /var/lib/%{name} -s /bin/bash %{name}
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -33,28 +33,28 @@ mv * $RPM_BUILD_ROOT/usr/share/%{name}
 arch=$(echo "%{_arch}" | sed -e 's/_/-/')
 mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d/
 cd $RPM_BUILD_ROOT/etc/rc.d/init.d/
-ln -sf /usr/share/%{name}/bin/nexus $RPM_BUILD_ROOT/etc/rc.d/init.d/
+ln -sf /usr/share/%{name}/bin/nexus $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
 
 mkdir -p $RPM_BUILD_ROOT/etc/
-ln -sf /usr/share/%{name}/conf $RPM_BUILD_ROOT/etc/nexus
+ln -sf /usr/share/%{name}/conf $RPM_BUILD_ROOT/etc/%{name}
 
 # patch work dir
-sed -i -e 's/nexus-work=.*/nexus-work=\/var\/lib\/nexus\//' $RPM_BUILD_ROOT/usr/share/%{name}/conf/nexus.properties
-mkdir -p $RPM_BUILD_ROOT/var/lib/nexus
+sed -i -e 's/%{name}-work=.*/%{name}-work=\/var\/lib\/%{name}\//' $RPM_BUILD_ROOT/usr/share/%{name}/conf/nexus.properties
+mkdir -p $RPM_BUILD_ROOT/var/lib/%{name}
 
 # patch pid dir
-sed -i -e 's/PIDDIR=.*/PIDDIR=\/var\/run\/nexus/' $RPM_BUILD_ROOT/usr/share/%{name}/bin/nexus
-mkdir -p $RPM_BUILD_ROOT/var/run/nexus
+sed -i -e 's/PIDDIR=.*/PIDDIR=\/var\/run\/%{name}/' $RPM_BUILD_ROOT/usr/share/%{name}/bin/nexus
+mkdir -p $RPM_BUILD_ROOT/var/run/%{name}
 
 # Patch user
-sed -i -e 's/#RUN_AS_USER=.*/RUN_AS_USER=nexus/' $RPM_BUILD_ROOT/usr/share/%{name}/bin/nexus
+sed -i -e 's/#RUN_AS_USER=.*/RUN_AS_USER=%{name}/' $RPM_BUILD_ROOT/usr/share/%{name}/bin/nexus
 
 # patch logfile
-mkdir -p $RPM_BUILD_ROOT/var/log/nexus
-sed -i -e 's/wrapper.logfile=.*/wrapper.logfile=\/var\/log\/nexus\/nexus.log/' $RPM_BUILD_ROOT/usr/share/%{name}/bin/jsw/conf/wrapper.conf
+mkdir -p $RPM_BUILD_ROOT/var/log/%{name}
+sed -i -e 's/wrapper.logfile=.*/wrapper.logfile=\/var\/log\/%{name}\/%{name}.log/' $RPM_BUILD_ROOT/usr/share/%{name}/bin/jsw/conf/wrapper.conf
 
 %preun
-service nexus stop
+service %{name} stop
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -62,12 +62,12 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %doc
-/etc/rc.d/init.d/nexus
-%attr(-,nexus,nexus) /etc/nexus
-%attr(-,nexus,nexus) /var/lib/nexus
-%attr(-,nexus,nexus) /var/log/nexus
-%attr(-,nexus,nexus) /var/run/nexus
-%attr(-,nexus,nexus) /usr/share/%{name}
+/etc/rc.d/init.d/%{name}
+%attr(-,%{name},%{name}) /etc/%{name}
+%attr(-,%{name},%{name}) /var/lib/%{name}
+%attr(-,%{name},%{name}) /var/log/%{name}
+%attr(-,%{name},%{name}) /var/run/%{name}
+%attr(-,%{name},%{name}) /usr/share/%{name}
 
 %changelog
 * Sat Feb 13 2016 Julio Gonzalez <git@juliogonzalez.es> - 2.12.0-01
