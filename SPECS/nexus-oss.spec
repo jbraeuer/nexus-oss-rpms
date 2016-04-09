@@ -22,7 +22,7 @@ A package repository
 %build
 
 %pre
-/usr/bin/getent passwd %{name} || /usr/sbin/useradd -r -d /var/lib/%{name} -s /bin/bash %{name}
+/usr/bin/getent passwd %{name} > /dev/null || /usr/sbin/useradd -r -d /var/lib/%{name} -s /bin/bash %{name}
 
 %install
 rm -rf $RPM_BUILD_ROOT
