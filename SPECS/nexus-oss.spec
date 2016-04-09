@@ -53,9 +53,6 @@ sed -i -e 's/#RUN_AS_USER=.*/RUN_AS_USER=nexus/' $RPM_BUILD_ROOT/usr/share/%{nam
 mkdir -p $RPM_BUILD_ROOT/var/log/nexus
 sed -i -e 's/wrapper.logfile=.*/wrapper.logfile=\/var\/log\/nexus\/nexus.log/' $RPM_BUILD_ROOT/usr/share/%{name}/bin/jsw/conf/wrapper.conf
 
-%postun
-/usr/sbin/userdel nexus
-
 %clean
 rm -rf $RPM_BUILD_ROOT
 
