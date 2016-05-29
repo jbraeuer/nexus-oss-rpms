@@ -1,6 +1,6 @@
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus
-Version: 2.12.0
+Version: 2.13.0
 Release: 01
 License: AGPL
 Group: unknown
@@ -68,6 +68,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(-,%{name},%{name}) /usr/share/%{name}
 
 %changelog
+* Sun May 29 2016 Julio Gonzalez <git@juliogonzalez.es> - 2.13.0-01
+- Update to 2.13.0-01
+
 * Sat Feb 13 2016 Julio Gonzalez <git@juliogonzalez.es> - 2.12.0-01
 - Update to 2.12.0-01
 
