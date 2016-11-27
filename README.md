@@ -1,7 +1,7 @@
 [![Build Status](https://jenkins-juliogonzalez.rhcloud.com/job/nexus-oss-rpm-build/badge/icon)](https://jenkins-juliogonzalez.rhcloud.com/job/nexus-oss-rpm-build/)
 
-This repository holds files and scripts to build Sonatype Nexus 2.13.0-01 and
-3.0.0-03 RPM packages.
+This repository holds files and scripts to build Sonatype Nexus 2.x and
+3.x RPM packages.
 
 # Licenses
 
@@ -11,8 +11,8 @@ This repository holds files and scripts to build Sonatype Nexus 2.13.0-01 and
 
 # Requirements, building and configuring:
 
-- [Nexus 2.13.0-01](NEXUS2.md)
-- [Nexus 3.0.0-03](NEXUS3.md)
+- [Nexus 2.x](NEXUS2.md)
+- [Nexus 3.x](NEXUS3.md)
 
 # Current state
 
