@@ -19,8 +19,9 @@ To run Nexus:
 
 # Upgrading from 2.x
 
-According to [Nexus documentation](https://books.sonatype.com/nexus-book/3.0/reference/install.html#installation-upgrading) it is not possible to upgrade to
-Nexus 3.x from Nexus 2.x at this moment.
+According to [Nexus documentation](https://books.sonatype.com/nexus-book/reference3/upgrading.html) it is possible to upgrade from
+Nexus 2.14.4 to Nexus 3.3.1 (among other options). You can generate all the required RPMs with this repository, but please carefully
+read the documentation, and keep in mind that at this moment [Yum repositories are not available yet](https://support.sonatype.com/hc/en-us/articles/222426568-Nexus-Repository-Manager-Feature-Compatibility-Matrix)
 
 # Daemon
 
