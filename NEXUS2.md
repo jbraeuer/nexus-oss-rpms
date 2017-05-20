@@ -1,15 +1,15 @@
 # Requirements
 
-- To build the RPM:
- - rpm-build
- - wget
- - tar
- - gz
+To build the RPM:
+- rpm-build
+- curl
+- tar
+- gz
 
-- To run Nexus:
- - Any JDK/JRE (Oracle or OpenJDK) 1.7 or 1.8 installed (it is not
-   included as dependency because CentOS 7 does not provide a virtual
-   package for Java).
+To run Nexus:
+- Any JDK/JRE (Oracle or OpenJDK) 1.7 or 1.8 installed (it is not
+  included as dependency because CentOS 7 does not provide a virtual
+  package for Java).
 
 # How to build
 
