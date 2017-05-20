@@ -1,7 +1,7 @@
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus
-Version: 2.14.3
-Release: 02
+Version: 2.14.4
+Release: 03
 License: AGPL
 Group: unknown
 URL: http://nexus.sonatype.org/
@@ -69,6 +69,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(-,%{name},%{name}) /usr/share/%{name}
 
 %changelog
+
+* Sat May 20 2017 Julio Gonzalez <git@juliogonzalez.es> - 2.14.4-03
+- Update to 2.14.4-03
 
 * Sat May 20 2017 Julio Gonzalez <git@juliogonzalez.es> - 2.14.3-02
 - Update to 2.14.3-02
