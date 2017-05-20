@@ -20,6 +20,7 @@ A package repository
 %setup -q -n %{name}-%{version}-%{release}
 
 %build
+%define debug_package %{nil}
 
 %pre
 /usr/bin/getent passwd %{name} > /dev/null || /usr/sbin/useradd -r -d /var/lib/%{name} -s /bin/bash %{name}

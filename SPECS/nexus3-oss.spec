@@ -20,6 +20,7 @@ A package repository
 %setup -q -n nexus-%{version}-%{release}
 
 %build
+%define debug_package %{nil}
 
 %pre
 /usr/bin/getent passwd %{name} || /usr/sbin/useradd -r -d /var/lib/%{name} -s /bin/bash %{name}
