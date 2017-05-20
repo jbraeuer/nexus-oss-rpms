@@ -33,12 +33,12 @@ function create_build_env() {
 
 function get_sources() {
   if [ ! -f "./SOURCES/${2}" ]; then
-    wget "${1}" -O "./SOURCES/${2}"
+    curl -s -L "${1}" -o "./SOURCES/${2}"
   fi
 }
 
 function build_rpm() {
-  rpmbuild --define "_topdir `pwd`" -ba "SPECS/${1}"
+  rpmbuild --quiet --define "_topdir `pwd`" -ba "SPECS/${1}"
   return ${?}
 }
 

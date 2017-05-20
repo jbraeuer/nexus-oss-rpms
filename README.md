@@ -1,4 +1,4 @@
-[![Build Status](https://jenkins-juliogonzalez.rhcloud.com/job/nexus-oss-rpm-build/badge/icon)](https://jenkins-juliogonzalez.rhcloud.com/job/nexus-oss-rpm-build/)
+[![Build Status](https://jenkins.juliogonzalez.es/job/nexus-oss-rpms-build/badge/icon)](https://jenkins.juliogonzalez.es/job/nexus-oss-rpms-build/)
 
 This repository holds files and scripts to build Sonatype Nexus 2.x and
 3.x RPM packages.
@@ -16,5 +16,8 @@ This repository holds files and scripts to build Sonatype Nexus 2.x and
 
 # Current state
 
-This has been tested on CentOS Linux 7.1 x84. It should work
-on RHEL and other derivates.
+Tested on:
+
+- CentOS6 x86_64
+- CentOS7 x86_64
+- Amazon Linux 2017.03

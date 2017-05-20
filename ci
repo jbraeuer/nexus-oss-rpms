@@ -1,0 +1,182 @@
+#!/bin/bash
+# Language (force it so getopt messages are always in english, as the script)
+LANG=en_EN
+
+# Get script name
+SCRIPT=$(basename ${0})
+
+# Supported distributions
+SUPPORTEDDISTROS="centos6 centos7 amazon2017.03"
+
+# Supported Nexus major versions
+NEXUSMAJORVERS="2 3"
+
+# Allocate tty by default
+TTY='-t'
+
+# Default values to for nexus healt tests
+MAXRETRIES=20
+TIME_WAIT=10
+
+print_info() {
+  echo -e "\033[1;36m[INFO] ${1}\033[0m"
+}
+
+print_error() {
+  echo -e "\033[1;31m[ERROR] ${1}\033[0m"
+}
+
+print_ok() {
+  echo -e "\033[1;32m[INFO] ${1}\033[0m"
+}
+
+print_incorrect_syntax() {
+  print_error "Incorrect syntax. Use ${SCRIPT} -h for help"
+}
+
+print_error_unsupported_distro() {
+  print_error "Unsupported distro. Use ${SCRIPT} -h for help"
+}
+
+print_error_unsupported_nexus_major_ver() {
+  print_error "Unsupported Nexus major version. Use ${SCRIPT} -h for help"
+}
+
+print_help() {
+  echo ""
+  echo "Script to perform nexus-oss-rpms CI"
+  echo ""
+  echo "Syntax: "
+  echo ""
+  echo "${SCRIPT} <ARGUMENTS>"
+  echo ""
+  echo "Mandatory arguments:"
+  echo ""
+  echo " --distro=<$(echo ${1}|tr ' ' '|')>"
+  echo " --nexus-major-ver=<$(echo ${2}|tr ' ' '|')>"
+  echo ""
+  echo "Optional arguments:"
+  echo ""
+  echo "  --max-retries=<RETRIES> Number of retries to check Nexus health."
+  echo "                          By default 20"
+  echo "  --time-wait=<SECONDS>   Time to wait between retries (by default 10)"
+  echo "  --name=<CONTAINER_NAME> Define the container name"
+  echo "                          If undefined, container name will be"
+  echo "                          s3fs-fuse-rpm-<DISTRO>-<TIMESTAMP>"
+  echo "  --remove-on-error If present, remove the container on errors"
+  echo "  --notty           If present, does not allocate a tty for docker"
+  echo ""
+}
+
+remove_container() {
+  docker container rm -f ${1}
+}
+
+exit_error() {
+  if [ ${1} -ne 0 ]; then
+    print_error "An error happened! Check log!"
+    if [ ! -z ${REMOVE_ON_ERROR} ]; then
+      remove_container ${CONTAINER_NAME}
+    fi
+    exit 1
+  fi
+}
+
+docker_run() {
+  if [ ! -z ${3} ]; then
+    local COMMAND_USER="-u ${3}"
+  fi
+  local COMMAND="docker container exec -i ${TTY} ${COMMAND_USER} ${1} ${2}"
+  local RESULT=$(${COMMAND})
+  exit_error ${?}
+  if [ "${RESULT}" != "" ]; then
+    echo "${RESULT}"
+  fi
+}
+
+# read the options
+ARGS=$(getopt -o h --long help,remove-on-error,notty,distro:,nexus-major-ver:,max-retries:,time-wait:,name: -n "${SCRIPT}" -- "$@")
+if [ $? -ne 0 ];
+then
+  print_incorrect_syntax
+  exit 1
+fi
+eval set -- "${ARGS}"
+
+# extract options and their arguments into variables
+while true ; do
+  case "${1}" in
+    -h|--help)         print_help "${SUPPORTEDDISTROS}" "${NEXUSMAJORVERS}"; exit 1;;
+    --remove-on-error) REMOVE_ON_ERROR="--rm"; shift 1 ;;
+    --notty)           TTY=""; shift 1 ;;
+    --distro)          DISTRO="${2}"; shift 2;;
+    --nexus-major-ver) NEXUSMAJORVER="${2}"; shift 2;;
+    --max-retries)     MAXRETRIES="${2}"; shift 2;;
+    --time-wait)       TIME_WAIT="${2}"; shift 2;;
+    --name)            CONTAINER_NAME="${2}"; shift 2;;
+    --)                shift ; break ;;
+    *)                 print_incorrect_syntax; exit 1;;
+  esac
+done
+
+# Check distribution
+case "${DISTRO}" in
+  centos6)       DOCKER_IMAGE='centos:centos6' ;;
+  centos7)       DOCKER_IMAGE='centos:centos7' ;;
+  amazon2017.03) DOCKER_IMAGE='amazonlinux:2017.03'
+                 EXTRA_PACKAGES='shadow-utils procps util-linux' ;;
+  *)             print_error_unsupported_distro
+                 exit 1;;
+esac
+
+# Check nexus major version
+case "${NEXUSMAJORVER}" in
+  2) PACKAGE_NAME='nexus'
+     NEXUS_URL='http://localhost:8081/nexus/' ;;
+  3) PACKAGE_NAME='nexus3'
+     NEXUS_URL='http://localhost:8081/' ;;
+  *) print_error_unsupported_nexus_major_ver
+     exit 1;;
+esac
+
+# Check name
+if [ -z ${CONTAINER_NAME} ]; then
+  CONTAINER_NAME="nexus-oss-rpm-${DISTRO}-$(date +'%s')"
+fi
+
+print_info "Starting container ${CONTAINER_NAME}..."
+docker container run -i ${TTY} ${REMOVE_ON_ERROR} --name "${CONTAINER_NAME}" -v ${PWD}:/tmp/nexus-oss-rpms -w /tmp/nexus-oss-rpms -d ${DOCKER_IMAGE} /bin/bash -c 'while [ 1 -eq 1 ]; do sleep 60; done'
+print_info "Cleaning up"
+docker_run "${CONTAINER_NAME}" "./clean"
+print_info "Installing required dependencies..."
+docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install rpm-build java-1.8.0-openjdk ${EXTRA_PACKAGES}"
+print_info "Configuring user ci..."
+docker_run "${CONTAINER_NAME}" "/usr/sbin/groupadd -g $(id -g) ci"
+docker_run "${CONTAINER_NAME}" "/usr/sbin/useradd -m -d /home/ci -u ${UID} -g $(id -g) ci"
+docker_run "${CONTAINER_NAME}" "/bin/chown ci:ci /home/ci"
+print_info "Building nexus-oss package..."
+docker_run "${CONTAINER_NAME}" "./nexus-oss-rpm -v ${NEXUSMAJORVER}" "ci"
+print_info "Installing nexus-oss package..."
+docker_run "${CONTAINER_NAME}" "/bin/rpm -i RPMS/$HOSTTYPE/${PACKAGE_NAME}-*.*.$HOSTTYPE.rpm"
+print_info "Starting nexus..."
+docker_run "${CONTAINER_NAME}" "/etc/init.d/${PACKAGE_NAME} start"
+print_info "Checking application (${MAXRETRIES} retries, ${TIME_WAIT} seconds between retries)..."
+RETRIES=0
+while [ ${RETRIES} -lt ${MAXRETRIES} ]; do
+  HTTP_CODE=$(docker_run "${CONTAINER_NAME}" "curl -s -o /dev/null -w %{http_code} ${NEXUS_URL}")
+  print_info "Status: ${HTTP_CODE}"
+  if [ "${HTTP_CODE}" == "200" ]; then
+    break
+  fi
+  ((RETRIES+=1))
+  sleep ${TIME_WAIT}
+done
+if [ "${HTTP_CODE}" == "200" ]; then
+  print_info "Nexus is healty"
+else
+  print_error "Could not verify application after ${MAXRETRIES} retries. Last HTTP error was ${HTTP_CODE}!"
+  exit_error 1
+fi
+print_info "Removing container..."
+remove_container ${CONTAINER_NAME}
+print_ok "Everything is OK"
