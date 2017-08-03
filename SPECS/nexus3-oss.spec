@@ -1,6 +1,6 @@
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus3
-Version: 3.4.0
+Version: 3.5.0
 Release: 02
 License: AGPL
 Group: unknown
@@ -67,6 +67,9 @@ rm -rf $RPM_BUILD_ROOT
 %attr(-,%{name},%{name}) /usr/share/%{name}
 
 %changelog
+
+* Thu Aug 3 2017 Julio Gonzalez <git@juliogonzalez.es> - 3.5.0-02
+- Update to Nexus 3.5.0-02
 
 * Sat Jul 29 2017 Julio Gonzalez <git@juliogonzalez.es> - 3.4.0-02
 - Update to Nexus 3.4.0-02
