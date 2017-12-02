@@ -149,7 +149,7 @@ docker container run -i ${TTY} ${REMOVE_ON_ERROR} --name "${CONTAINER_NAME}" -v 
 print_info "Cleaning up"
 docker_run "${CONTAINER_NAME}" "./clean"
 print_info "Installing required dependencies..."
-docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install rpm-build java-1.8.0-openjdk ${EXTRA_PACKAGES}"
+docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install rpm-build java-1.8.0 ${EXTRA_PACKAGES}"
 print_info "Configuring user ci..."
 docker_run "${CONTAINER_NAME}" "/usr/sbin/groupadd -g $(id -g) ci"
 docker_run "${CONTAINER_NAME}" "/usr/sbin/useradd -m -d /home/ci -u ${UID} -g $(id -g) ci"
