@@ -1,7 +1,7 @@
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus3
-Version: 3.6.1
-Release: 02
+Version: 3.6.2
+Release: 01
 License: AGPL
 Group: unknown
 URL: http://nexus.sonatype.org/
@@ -81,22 +81,25 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 
-* Sat Dec 2 2017 Anton Patsev <apatsev@luxoft.com> - 3.6.0-01
+* Sun Dec 24 2017 Julio Gonzalez <git@juliogonzalez.es> - 3.6.2-01
+- Update to Nexus 3.6.2-01
+
+* Sat Dec  2 2017 Anton Patsev <apatsev@luxoft.com> - 3.6.0-01
 - Update to Nexus 3.6.1-02
 - Fix source
 - Use package name to configure user to run Nexus
 - Require Java 1.8.0
 
-* Sat Dec 2 2017 Julio Gonzalez <git@juliogonzalez.es> - 3.6.0-02
+* Sat Dec  2 2017 Julio Gonzalez <git@juliogonzalez.es> - 3.6.0-02
 - Update to Nexus 3.6.0-02
 
-* Sat Dec 2 2017 Julio Gonzalez <git@juliogonzalez.es> - 3.5.2-01
+* Sat Dec  2 2017 Julio Gonzalez <git@juliogonzalez.es> - 3.5.2-01
 - Update to Nexus 3.5.2-01
 
-* Sat Dec 2 2017 Julio Gonzalez <git@juliogonzalez.es> - 3.5.1-02
+* Sat Dec  2 2017 Julio Gonzalez <git@juliogonzalez.es> - 3.5.1-02
 - Update to Nexus 3.5.1-02
 
-* Thu Aug 3 2017 Julio Gonzalez <git@juliogonzalez.es> - 3.5.0-02
+* Thu Aug  3 2017 Julio Gonzalez <git@juliogonzalez.es> - 3.5.0-02
 - Update to Nexus 3.5.0-02
 
 * Sat Jul 29 2017 Julio Gonzalez <git@juliogonzalez.es> - 3.4.0-02
@@ -120,5 +123,5 @@ rm -rf $RPM_BUILD_ROOT
 * Sat Nov 12 2016 Julio Gonzalez <git@juliogonzalez.es> - 3.1.0-04
 - Update to Nexus 3.1.0-04
 
-* Fri Apr 8 2016 Julio Gonzalez <git@juliogonzalez.es> - 3.0.0-03
+* Fri Apr  8 2016 Julio Gonzalez <git@juliogonzalez.es> - 3.0.0-03
 - Initial packaging for Nexus 3.x
