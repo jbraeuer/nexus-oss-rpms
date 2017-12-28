@@ -1,7 +1,6 @@
 [![Build Status](https://jenkins.juliogonzalez.es/job/nexus-oss-rpms-build/badge/icon)](https://jenkins.juliogonzalez.es/job/nexus-oss-rpms-build/)
 
-This repository holds files and scripts to build Sonatype Nexus 2.x and
-3.x RPM packages.
+This repository holds files and scripts to build Sonatype Nexus 2.x and 3.x RPM packages. It also has required stuff to perform Continous Integration.
 
 # Licenses
 

@@ -119,16 +119,6 @@ while true ; do
   esac
 done
 
-# Check distribution
-case "${DISTRO}" in
-  centos6)       DOCKER_IMAGE='centos:centos6' ;;
-  centos7)       DOCKER_IMAGE='centos:centos7' ;;
-  amazon2017.03) DOCKER_IMAGE='amazonlinux:2017.03'
-                 EXTRA_PACKAGES='shadow-utils procps util-linux' ;;
-  *)             print_error_unsupported_distro
-                 exit 1;;
-esac
-
 # Check nexus major version
 case "${NEXUSMAJORVER}" in
   2) PACKAGE_NAME='nexus'
@@ -139,27 +129,35 @@ case "${NEXUSMAJORVER}" in
      exit 1;;
 esac
 
+# Check distribution
+case "${DISTRO}" in
+  centos6)       DOCKER_IMAGE='juliogonzalez/centos6-nexus:latest'
+                 START_CMD="/etc/init.d/${PACKAGE_NAME} start" ;;
+  centos7)       DOCKER_IMAGE='juliogonzalez/centos7-nexus:latest'
+                 START_CMD="/etc/init.d/${PACKAGE_NAME} start" ;;
+  amazon2017.03) DOCKER_IMAGE='juliogonzalez/amazon2017.03-nexus:latest'
+                 START_CMD="/etc/init.d/${PACKAGE_NAME} start";;
+  *)             print_error_unsupported_distro
+                 exit 1;;
+esac
+
 # Check name
 if [ -z ${CONTAINER_NAME} ]; then
   CONTAINER_NAME="nexus-oss-rpm-${DISTRO}-$(date +'%s')"
 fi
 
+print_info "Pulling latest image..."
+docker pull ${DOCKER_IMAGE}
 print_info "Starting container ${CONTAINER_NAME}..."
-docker container run -i ${TTY} ${REMOVE_ON_ERROR} --name "${CONTAINER_NAME}" -v ${PWD}:/tmp/nexus-oss-rpms -w /tmp/nexus-oss-rpms -d ${DOCKER_IMAGE} /bin/bash -c 'while [ 1 -eq 1 ]; do sleep 60; done'
+docker container run -i ${TTY} ${REMOVE_ON_ERROR} --name "${CONTAINER_NAME}" -v ${PWD}:/tmp/nexus-oss-rpms -w /tmp/nexus-oss-rpms -d ${DOCKER_IMAGE}
 print_info "Cleaning up"
 docker_run "${CONTAINER_NAME}" "./clean"
-print_info "Installing required dependencies..."
-docker_run "${CONTAINER_NAME}" "/usr/bin/yum -q -y install rpm-build java-1.8.0 ${EXTRA_PACKAGES}"
-print_info "Configuring user ci..."
-docker_run "${CONTAINER_NAME}" "/usr/sbin/groupadd -g $(id -g) ci"
-docker_run "${CONTAINER_NAME}" "/usr/sbin/useradd -m -d /home/ci -u ${UID} -g $(id -g) ci"
-docker_run "${CONTAINER_NAME}" "/bin/chown ci:ci /home/ci"
 print_info "Building nexus-oss package..."
 docker_run "${CONTAINER_NAME}" "./nexus-oss-rpm -v ${NEXUSMAJORVER}" "ci"
 print_info "Installing nexus-oss package..."
 docker_run "${CONTAINER_NAME}" "/bin/rpm -i RPMS/$HOSTTYPE/${PACKAGE_NAME}-*.*.$HOSTTYPE.rpm"
 print_info "Starting nexus..."
-docker_run "${CONTAINER_NAME}" "/etc/init.d/${PACKAGE_NAME} start"
+docker_run "${CONTAINER_NAME}" "${START_CMD}"
 print_info "Checking application (${MAXRETRIES} retries, ${TIME_WAIT} seconds between retries)..."
 RETRIES=0
 while [ ${RETRIES} -lt ${MAXRETRIES} ]; do

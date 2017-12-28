@@ -1,0 +1,158 @@
+#!/bin/bash
+BASE_DIR=$(dirname "${0}")
+
+LANG=en_EN
+
+# Get script name
+SCRIPT=$(basename ${0})
+
+# Supported distributions versions
+SUPPORTEDDISTROS="centos6 centos7 amazon2017.03 opensuse42.3"
+
+# Parameters for docker
+GID=$(id -G|cut -d' ' -f1)
+DATE=$(date +%Y%m%dT%H%M%s%N)
+
+help() {
+  echo ""
+  echo "Script to create Continuous Integration Nexus Docker images"
+  echo ""
+  echo "Syntax: "
+  echo ""
+  echo "${SCRIPT} <ARGUMENTS>"
+  echo ""
+  echo "Mandatory arguments:"
+  echo ""
+  echo " --action=<create|update|updates_report|promote>"
+  echo "    * create: will create images from scratch. Output tag will be 'experimental'."
+  echo "    * updates_report: will create a report of the images requiring upgrades."
+  echo "    * update: will try to update the base image, and software images. Output tag"
+  echo "              will be 'experimental'."
+  echo "    * promote: will promote image(s) by removing tagging then as 'latest'."
+  echo "    * publish: will push current stable version to docker registry."
+  echo " --distributions=<DISTRIBUTIONS>"
+  echo "    Optional: A comma separated list of distributions (supported: $(echo ${SUPPORTEDDISTROS}|sed -e 's/ /, /g'))"
+  echo ""
+  exit 1
+}
+
+print_incorrect_syntax() {
+  echo "Incorrect syntax (use -h for help)"
+}
+
+print_unknown_distro() {
+  echo "Unknown distribution ${1} (use -h for help)"
+}
+
+check_updates() {
+  local IMAGE_NAME="${1}"
+  local DISTRO="${2}"
+  local VERSION="${3}"
+  local CONTNAME="nexus-${DISTRO}"
+  docker run -i -u root --name ${CONTNAME} ${IMAGE_NAME} /opt/check_updates.sh
+  local UPDATES=${?}
+  docker rm ${CONTNAME} > /dev/null
+  return  "${UPDATES}"
+}
+
+update_image() {
+  local IMAGE_NAME="${1}"
+  local DISTRO="${2}"
+  local VERSION="${3}"
+  local FULL="${4}"
+  if [ "${FULL}" != "TRUE" ]; then
+    NOCACHE='--no-cache'
+  fi
+  local BASE_IMAGE=$(gawk 'match($0, /^FROM (.*)$/, a) {print a[1]}' ${BASE_DIR}/${DISTRO}/Dockerfile)
+  docker pull ${BASE_IMAGE}
+  docker build --pull --build-arg UID=${UID} --build-arg GID=${GID} --build-arg DATE=${DATE} ${NOCACHE} -t ${IMAGE_NAME} ${BASE_DIR}/${DISTRO}/
+}
+
+ARGS=$(getopt -o h --long help,action:,distributions: -n "${SCRIPT}" -- "$@")
+if [ $? -ne 0 ];
+then
+  print_incorrect_syntax
+  exit 1
+fi
+eval set -- "${ARGS}"
+
+# extract options and their arguments into variables
+while true ; do
+  case "${1}" in
+    -h|--help)       help; exit 1 ;;
+    --action)        ACTION="${2}"; shift 2 ;;
+    --distributions) DISTROS="${2}"; shift 2;;
+    --)              shift ; break ;;
+    *)               print_incorrect_syntax; exit 1 ;;
+  esac
+done
+
+# Check actions
+case "${ACTION}" in
+  create) ;;
+  updates_report) ;;
+  update) ;;
+  promote) ;;
+  publish) ;;
+  *) print_incorrect_syntax; exit 1;:
+esac
+
+# Check Distributions
+if [ -z "${DISTROS}" ]; then
+  ADISTROS="${SUPPORTEDDISTROS}"
+else
+  ADISTROS=""
+  for DISTRO in $(echo ${DISTROS}|tr ',' ' '); do
+     DFOUND=0
+     for SDISTRO in ${SUPPORTEDDISTROS}; do
+       if [ "${DISTRO}" == "${SDISTRO}" ]; then
+         ADISTROS="${ADISTROS} ${DISTRO}"
+         DFOUND=1
+       fi
+     done
+     if [ ${DFOUND} -eq 0 ]; then
+       print_unknown_distro "${DISTRO}"
+       exit 1
+     fi
+  done
+fi
+
+for DISTRO in ${ADISTROS}; do
+  IMAGE_NAME="juliogonzalez/${DISTRO}-nexus:latest"
+  IMAGE_NAME_EXP="${IMAGE_NAME/:latest/:experimental}"
+  if [ "${ACTION}" == "create" ]; then
+    echo "================================================================================="
+    echo " Creating ${IMAGE_NAME_EXP}..."
+    echo "================================================================================="
+    update_image ${IMAGE_NAME_EXP} ${DISTRO} ${VERSION} TRUE
+  elif [ "${ACTION}" == "updates_report" ]; then
+    echo "${DISTRO}|${VERSION}|$(check_updates ${IMAGE_NAME_EXP} ${DISTRO} ${VERSION})"
+  elif [ "${ACTION}" == "update" ]; then
+    echo "================================================================================="
+    echo " Trying to update image ${IMAGE_NAME_EXP}..."
+    echo "================================================================================="
+    check_updates ${IMAGE_NAME_EXP} ${DISTRO} ${VERSION}
+    UPDATES=${?}
+    if [ "${UPDATES}" == "0" ]; then
+      echo "INFO: No updates available"
+    else
+      if [ "${UPDATES}" == "2" -o "${UPDATES}" == "3" ]; then
+        echo "INFO: Will try to get an updated base image"
+      elif [ "${UPDATES}" == "1" -o "${UPDATES}" == "3" ]; then
+        echo "INFO: Update will include packages from the image"
+      fi
+      update_image ${IMAGE_NAME_EXP} ${DISTRO} ${VERSION} ${UPDATE_BASE}
+    fi
+  elif [ "${ACTION}" == "promote" ]; then
+    echo "================================================================================="
+    echo " Promoting ${IMAGE_NAME_EXP} as:"
+    echo "  ${IMAGE_NAME}"
+    echo "================================================================================="
+    docker tag ${IMAGE_NAME_EXP} ${IMAGE_NAME}
+  elif [ "${ACTION}" == "publish" ]; then
+    echo "================================================================================="
+    echo " Publishing ${IMAGE_NAME}..."
+    echo "================================================================================="
+    docker push ${IMAGE_NAME}
+  fi
+done
