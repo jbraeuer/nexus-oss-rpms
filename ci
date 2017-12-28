@@ -175,6 +175,8 @@ else
   print_error "Could not verify application after ${MAXRETRIES} retries. Last HTTP error was ${HTTP_CODE}!"
   exit_error 1
 fi
+print_info "Testing RPM removal..."
+docker_run "${CONTAINER_NAME}" "/bin/rpm -e ${PACKAGE_NAME}"
 print_info "Removing container..."
 remove_container ${CONTAINER_NAME}
 print_ok "Everything is OK"

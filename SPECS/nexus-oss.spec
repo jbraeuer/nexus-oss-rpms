@@ -1,13 +1,17 @@
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus
-Version: 2.14.5
-Release: 02
+Version: 2.14.5.02
+Release: 1%{?dist}
+# This is a hack, since Nexus versions are N.N.N-NN, we cannot use hyphen inside Version tag
+# and we need to adapt to Fedora/SUSE guidelines
+%define nversion %(echo %{version}|sed -r 's/(.*)\\./\\1-/')
 License: AGPL
 Group: unknown
 URL: http://nexus.sonatype.org/
-Source0: %{name}-%{version}-%{release}-bundle.tar.gz
+Source0: %{name}-%{nversion}-bundle.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(pre): /usr/sbin/useradd, /usr/bin/getent
+Requires: initscripts
 Requires(postun): /usr/sbin/userdel
 AutoReqProv: no
 
@@ -17,7 +21,7 @@ AutoReqProv: no
 A package repository
 
 %prep
-%setup -q -n %{name}-%{version}-%{release}
+%setup -q -n %{name}-%{nversion}
 
 %build
 %define debug_package %{nil}
@@ -53,7 +57,7 @@ mkdir -p $RPM_BUILD_ROOT/var/log/%{name}
 sed -i -e 's/wrapper.logfile=.*/wrapper.logfile=\/var\/log\/%{name}\/%{name}.log/' $RPM_BUILD_ROOT/usr/share/%{name}/bin/jsw/conf/wrapper.conf
 
 %preun
-service %{name} stop
+/sbin/service %{name} stop
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -70,7 +74,11 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 
-* Thu Aug 3 2017 Julio Gonzalez <git@juliogonzalez.es> - 2.14.5-02
+* Thu Dec 28 2017 Julio Gonzalez <git@juliogonzalez.es> - 2.14.5.02-1
+- Start using Fedora/RHEL release conventions
+- Fix problems on RPM removals
+
+* Thu Aug  3 2017 Julio Gonzalez <git@juliogonzalez.es> - 2.14.5-02
 - Update to 2.14.5-02
 
 * Sat May 20 2017 Julio Gonzalez <git@juliogonzalez.es> - 2.14.4-03

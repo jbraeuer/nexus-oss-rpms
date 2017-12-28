@@ -1,13 +1,17 @@
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus3
-Version: 3.6.2
-Release: 01
+Version: 3.6.2.01
+Release: 1%{?dist}
+# This is a hack, since Nexus versions are N.N.N-NN, we cannot use hyphen inside Version tag
+# and we need to adapt to Fedora/SUSE guidelines
+%define nversion %(echo %{version}|sed -r 's/(.*)\\./\\1-/')
 License: AGPL
 Group: unknown
 URL: http://nexus.sonatype.org/
-Source0: http://download.sonatype.com/nexus/3/%{name}-%{version}-%{release}-unix.tar.gz
+Source0: http://download.sonatype.com/nexus/3/%{name}-%{nversion}-unix.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(pre): /usr/sbin/useradd, /usr/bin/getent
+Requires: initscripts
 Requires(postun): /usr/sbin/userdel
 Requires: java >= 1.8.0
 AutoReqProv: no
@@ -18,7 +22,7 @@ AutoReqProv: no
 A package repository
 
 %prep
-%setup -q -n nexus-%{version}-%{release}
+%setup -q -n nexus-%{nversion}
 
 %build
 %define debug_package %{nil}
@@ -65,7 +69,7 @@ if [ "${JAVA_MAJOR_VERSION}" != "8" ]; then
 fi
 
 %preun
-service %{name} stop
+/sbin/service %{name} stop
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -80,6 +84,10 @@ rm -rf $RPM_BUILD_ROOT
 %attr(-,%{name},%{name}) /usr/share/%{name}
 
 %changelog
+
+* Thu Dec 28 2017 Julio Gonzalez <git@juliogonzalez.es> - 3.6.2.01-1
+- Start using Fedora/RHEL release conventions
+- Fix problems on RPM removals
 
 * Sun Dec 24 2017 Julio Gonzalez <git@juliogonzalez.es> - 3.6.2-01
 - Update to Nexus 3.6.2-01
