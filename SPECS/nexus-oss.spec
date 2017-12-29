@@ -8,10 +8,11 @@ Release: 1%{?dist}
 License: AGPL
 Group: unknown
 URL: http://nexus.sonatype.org/
-Source0: %{name}-%{nversion}-bundle.tar.gz
+Source0: http://www.sonatype.org/downloads/%{name}-%{nversion}-bundle.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(pre): /usr/sbin/useradd, /usr/bin/getent
 Requires: initscripts
+Requires: java >= 1.8.0
 Requires(postun): /usr/sbin/userdel
 AutoReqProv: no
 
@@ -56,6 +57,19 @@ sed -i -e 's/#RUN_AS_USER=.*/RUN_AS_USER=%{name}/' $RPM_BUILD_ROOT/usr/share/%{n
 mkdir -p $RPM_BUILD_ROOT/var/log/%{name}
 sed -i -e 's/wrapper.logfile=.*/wrapper.logfile=\/var\/log\/%{name}\/%{name}.log/' $RPM_BUILD_ROOT/usr/share/%{name}/bin/jsw/conf/wrapper.conf
 
+# Since java is a virtual package, we can only check that >= 1.8.0 is installed, but not < 1.9
+# Also it is possible that despite 1.8.0 is installed, it is not the default version, so we check
+# for it
+JAVA_MAJOR_VERSION=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f2)
+if [ "${JAVA_MAJOR_VERSION}" != "8" ]; then
+  echo "WARNING! Default java version does not seem to be 1.8!"
+  echo "Keep in mind that Nexus3 is only compatible with Java 1.8.0 at the moment!"
+  echo "Tip: Check if 1.8 is installed and use (as root):"
+  echo "update-alternatives --config java"
+  echo "to adjust the default version to be used"
+fi
+
+
 %preun
 /sbin/service %{name} stop
 
@@ -77,6 +91,8 @@ rm -rf $RPM_BUILD_ROOT
 * Thu Dec 28 2017 Julio Gonzalez <git@juliogonzalez.es> - 2.14.5.02-1
 - Start using Fedora/RHEL release conventions
 - Fix problems on RPM removals
+- Require Java 1.8.0
+- Fix source
 
 * Thu Aug  3 2017 Julio Gonzalez <git@juliogonzalez.es> - 2.14.5-02
 - Update to 2.14.5-02

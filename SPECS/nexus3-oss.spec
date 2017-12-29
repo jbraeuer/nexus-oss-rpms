@@ -56,7 +56,7 @@ sed -i -e 's/karaf.bootstrap.log=.*/karaf.bootstrap.log=\/var\/log\/%{name}\/kar
 sed -i -e 's/<File>${karaf.data}\/log\/nexus.log<\/File>/<File>\/var\/log\/%{name}\/%{name}.log<\/File>/' $RPM_BUILD_ROOT/usr/share/%{name}/etc/logback/logback.xml
 sed -i -e 's/<File>${karaf.data}\/log\/request.log<\/File>/<File>\/var\/log\/%{name}\/request.log<\/File>/' $RPM_BUILD_ROOT/usr/share/%{name}/etc/logback/logback-access.xml
 
-# Since java is a virtual package, we cannot only check that >= 1.8.0 is installed, but not < 1.9
+# Since java is a virtual package, we can only check that >= 1.8.0 is installed, but not < 1.9
 # Also it is possible that despite 1.8.0 is installed, it is not the default version, so we check
 # for it
 JAVA_MAJOR_VERSION=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f2)
