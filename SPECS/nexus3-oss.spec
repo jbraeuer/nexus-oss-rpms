@@ -1,3 +1,5 @@
+%define __os_install_post %{nil}
+
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus3
 Version: 3.6.2.01
@@ -12,11 +14,8 @@ Source0: http://download.sonatype.com/nexus/3/%{name}-%{nversion}-unix.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(pre): /usr/sbin/useradd, /usr/bin/getent
 Requires: initscripts
-Requires(postun): /usr/sbin/userdel
 Requires: java >= 1.8.0
 AutoReqProv: no
-
-%define __os_install_post %{nil}
 
 %description
 A package repository
@@ -84,7 +83,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(-,%{name},%{name}) /usr/share/%{name}
 
 %changelog
-
 * Thu Dec 28 2017 Julio Gonzalez <git@juliogonzalez.es> - 3.6.2.01-1
 - Start using Fedora/RHEL release conventions
 - Fix problems on RPM removals

@@ -1,3 +1,5 @@
+%define __os_install_post %{nil}
+
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus
 Version: 2.14.5.02
@@ -13,10 +15,7 @@ BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(pre): /usr/sbin/useradd, /usr/bin/getent
 Requires: initscripts
 Requires: java >= 1.8.0
-Requires(postun): /usr/sbin/userdel
 AutoReqProv: no
-
-%define __os_install_post %{nil}
 
 %description
 A package repository
@@ -69,7 +68,6 @@ if [ "${JAVA_MAJOR_VERSION}" != "8" ]; then
   echo "to adjust the default version to be used"
 fi
 
-
 %preun
 /sbin/service %{name} stop
 
@@ -87,7 +85,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(-,%{name},%{name}) /usr/share/%{name}
 
 %changelog
-
 * Thu Dec 28 2017 Julio Gonzalez <git@juliogonzalez.es> - 2.14.5.02-1
 - Start using Fedora/RHEL release conventions
 - Fix problems on RPM removals
