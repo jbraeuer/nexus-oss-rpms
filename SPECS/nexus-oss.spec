@@ -1,5 +1,14 @@
 %define __os_install_post %{nil}
 
+%if 0%{?suse_version}
+%define chkconfig_cmd /usr/bin/chkconfig
+%else
+%define chkconfig_cmd /sbin/chkconfig
+%endif
+
+# Use systemd for fedora >= 18, rhel >=7, SUSE >= 12 SP1 and openSUSE >= 42.1
+%define use_systemd (0%{?fedora} && 0%{?fedora} >= 18) || (0%{?rhel} && 0%{?rhel} >= 7) || (!0%{?is_opensuse} && 0%{?suse_version} >=1210) || (0%{?is_opensuse} && 0%{?sle_version} >= 120100)
+
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus
 Version: 2.14.5.02
@@ -13,7 +22,14 @@ URL: http://nexus.sonatype.org/
 Source0: http://www.sonatype.org/downloads/%{name}-%{nversion}-bundle.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(pre): /usr/sbin/useradd, /usr/bin/getent
-Requires: initscripts
+# As soon as we implement a systemd service, this ugly require can be removed
+%if %use_systemd
+%if (!0%{?is_opensuse} && 0%{?suse_version} >=1210) || (0%{?is_opensuse} && 0%{?sle_version} >= 120100)
+Requires: systemd-sysvinit
+%else
+Requires: systemd-sysv
+%endif
+%endif
 Requires: java >= 1.8.0
 AutoReqProv: no
 
@@ -27,16 +43,15 @@ A package repository
 %define debug_package %{nil}
 
 %pre
-/usr/bin/getent passwd %{name} > /dev/null || /usr/sbin/useradd -r -d /var/lib/%{name} -s /bin/bash %{name}
+/usr/bin/getent passwd %{name} > /dev/null || /usr/sbin/useradd -r -d /var/lib/%{name} -U -s /bin/bash %{name}
 
 %install
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/usr/share/%{name}
 mv * $RPM_BUILD_ROOT/usr/share/%{name}
 
-mkdir -p $RPM_BUILD_ROOT/etc/rc.d/init.d/
-cd $RPM_BUILD_ROOT/etc/rc.d/init.d/
-ln -sf /usr/share/%{name}/bin/nexus $RPM_BUILD_ROOT/etc/rc.d/init.d/%{name}
+mkdir -p $RPM_BUILD_ROOT/etc/init.d/
+ln -sf /usr/share/%{name}/bin/nexus $RPM_BUILD_ROOT/etc/init.d/%{name}
 
 mkdir -p $RPM_BUILD_ROOT/etc/
 ln -sf /usr/share/%{name}/conf $RPM_BUILD_ROOT/etc/%{name}
@@ -68,8 +83,25 @@ if [ "${JAVA_MAJOR_VERSION}" != "8" ]; then
   echo "to adjust the default version to be used"
 fi
 
+%post
+%if %use_systemd
+/usr/bin/systemctl daemon-reload
+%else
+%{chkconfig_cmd} --add %{name}
+%endif
+
 %preun
-/sbin/service %{name} stop
+%if %use_systemd
+/usr/bin/systemctl stop %{name}
+%else
+/etc/init.d/%{name} stop
+%{chkconfig_cmd} --del %{name}
+%endif
+
+%postun
+%if %use_systemd
+/usr/bin/systemctl daemon-reload
+%endif
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -77,7 +109,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %doc
-/etc/rc.d/init.d/%{name}
+/etc/init.d/%{name}
 %attr(-,%{name},%{name}) /etc/%{name}
 %attr(-,%{name},%{name}) /var/lib/%{name}
 %attr(-,%{name},%{name}) /var/log/%{name}
@@ -90,6 +122,7 @@ rm -rf $RPM_BUILD_ROOT
 - Fix problems on RPM removals
 - Require Java 1.8.0
 - Fix source
+- Make the package compatible with SUSE and openSUSE
 
 * Thu Aug  3 2017 Julio Gonzalez <git@juliogonzalez.es> - 2.14.5-02
 - Update to 2.14.5-02

@@ -21,7 +21,6 @@ RUN rpm -qa --qf "%{NAME}\n" > /opt/packages-image.txt && \
     zypper -q refresh && \
     zypper -q -n update && \
     zypper -q -n install \
-     aaa_base \
      curl \
      java-1.8.0 \
      rpm-build \

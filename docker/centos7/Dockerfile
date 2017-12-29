@@ -20,8 +20,8 @@ ARG DATE=None
 RUN rpm -qa --qf "%{NAME}\n" > /opt/packages-image.txt && \
     yum -y -q update && \
     yum -y -q install \
-     initscripts \
      java-1.8.0 \
+     systemd-sysv \
      rpm-build && \
     yum -q clean all # ${DATE}
 

@@ -6,10 +6,10 @@ LANG=en_EN
 SCRIPT=$(basename ${0})
 
 # Supported distributions
-SUPPORTEDDISTROS="centos6 centos7 amazon2017.03"
+SUPPORTEDDISTROS='centos6 centos7 amazon2017.03 opensuse42.3'
 
 # Supported Nexus major versions
-NEXUSMAJORVERS="2 3"
+NEXUSMAJORVERS='2 3'
 
 # Allocate tty by default
 TTY='-t'
@@ -134,9 +134,13 @@ case "${DISTRO}" in
   centos6)       DOCKER_IMAGE='juliogonzalez/centos6-nexus:latest'
                  START_CMD="/etc/init.d/${PACKAGE_NAME} start" ;;
   centos7)       DOCKER_IMAGE='juliogonzalez/centos7-nexus:latest'
-                 START_CMD="/etc/init.d/${PACKAGE_NAME} start" ;;
+                 DOCKER_PRIVILEGED='--privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro'
+                 START_CMD="/usr/bin/systemctl start ${PACKAGE_NAME}";;
   amazon2017.03) DOCKER_IMAGE='juliogonzalez/amazon2017.03-nexus:latest'
                  START_CMD="/etc/init.d/${PACKAGE_NAME} start";;
+  opensuse42.3)  DOCKER_IMAGE='juliogonzalez/opensuse42.3-nexus:latest'
+                 DOCKER_PRIVILEGED='--privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro'
+                 START_CMD="/usr/bin/systemctl start ${PACKAGE_NAME}";;
   *)             print_error_unsupported_distro
                  exit 1;;
 esac
@@ -149,7 +153,7 @@ fi
 print_info "Pulling latest image..."
 docker pull ${DOCKER_IMAGE}
 print_info "Starting container ${CONTAINER_NAME}..."
-docker container run -i ${TTY} ${REMOVE_ON_ERROR} --name "${CONTAINER_NAME}" -v ${PWD}:/tmp/nexus-oss-rpms -w /tmp/nexus-oss-rpms -d ${DOCKER_IMAGE}
+docker container run -i ${TTY} ${REMOVE_ON_ERROR} --name "${CONTAINER_NAME}" ${DOCKER_PRIVILEGED} -v ${PWD}:/tmp/nexus-oss-rpms -w /tmp/nexus-oss-rpms -d ${DOCKER_IMAGE}
 print_info "Cleaning up"
 docker_run "${CONTAINER_NAME}" "./clean"
 print_info "Building nexus-oss package..."

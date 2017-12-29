@@ -20,11 +20,11 @@ ARG DATE=None
 RUN rpm -qa --qf "%{NAME}\n" > /opt/packages-image.txt && \
     yum -y -q update && \
     yum -y -q install \
-     initscripts \
      java-1.8.0 \
      procps \
      rpm-build \
      shadow-utils \
+     systemd-sysv \
      util-linux && \
     yum -q clean all # ${DATE}
 
@@ -32,6 +32,4 @@ RUN rpm -qa --qf "%{NAME}\n" > /opt/packages-image.txt && \
 RUN groupadd -g ${GID} ci && \
     useradd -d /home/ci -m -u ${UID} -g ${GID} ci
 
-STOPSIGNAL SIGRTMIN+3
-
-CMD ["/sbin/init"]
+CMD ["/bin/bash", "/opt/start_wait.sh"]
