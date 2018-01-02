@@ -1,0 +1,14 @@
+[Unit]
+Description=Sonatype Nexus Repository Manager
+After=network.target
+
+[Service]
+Type=forking
+ExecStart=/usr/share/nexus3/bin/nexus start
+ExecStop=/usr/share/nexus3/bin/nexus stop
+User=nexus3
+Restart=on-abort
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

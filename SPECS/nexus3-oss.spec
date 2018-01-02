@@ -12,7 +12,7 @@
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus3
 Version: 3.6.2.01
-Release: 1%{?dist}
+Release: 2%{?dist}
 # This is a hack, since Nexus versions are N.N.N-NN, we cannot use hyphen inside Version tag
 # and we need to adapt to Fedora/SUSE guidelines
 %define nversion %(echo %{version}|sed -r 's/(.*)\\./\\1-/')
@@ -20,16 +20,9 @@ License: AGPL
 Group: unknown
 URL: http://nexus.sonatype.org/
 Source0: http://download.sonatype.com/nexus/3/%{name}-%{nversion}-unix.tar.gz
+Source1: %{name}.service
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(pre): /usr/sbin/useradd, /usr/bin/getent
-# As soon as we implement a systemd service, this ugly require can be removed
-%if %use_systemd
-%if (!0%{?is_opensuse} && 0%{?suse_version} >=1210) || (0%{?is_opensuse} && 0%{?sle_version} >= 120100)
-Requires: systemd-sysvinit
-%else
-Requires: systemd-sysv
-%endif
-%endif
 Requires: java >= 1.8.0
 AutoReqProv: no
 
@@ -51,8 +44,14 @@ mkdir -p $RPM_BUILD_ROOT/usr/share/%{name}
 mv * .install4j $RPM_BUILD_ROOT/usr/share/%{name}
 rm -rf $RPM_BUILD_ROOT/usr/share/%{name}/data
 
+%if %{use_systemd}
+%{__mkdir} -p %{buildroot}%{_unitdir}
+%{__install} -m644 %{SOURCE1} \
+    %{buildroot}%{_unitdir}/%{name}.service
+%else
 mkdir -p $RPM_BUILD_ROOT/etc/init.d/
 ln -sf /usr/share/%{name}/bin/nexus $RPM_BUILD_ROOT/etc/init.d/%{name}
+%endif
 
 mkdir -p $RPM_BUILD_ROOT/etc/
 ln -sf /usr/share/%{name}/etc $RPM_BUILD_ROOT/etc/%{name}
@@ -109,13 +108,21 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root,-)
 %doc
-/etc/init.d/%{name}
 %attr(-,%{name},%{name}) /etc/%{name}
 %attr(-,%{name},%{name}) /var/lib/%{name}
 %attr(-,%{name},%{name}) /var/log/%{name}
 %attr(-,%{name},%{name}) /usr/share/%{name}
+%if %{use_systemd}
+%{_unitdir}/%{name}.service
+%else
+/etc/init.d/%{name}
+%endif
 
 %changelog
+* Sat Dec 30 2017 Anton Patsev <patsev.anton@gmail.com> - 3.6.2.01-2
+- Stop requiring sysvinit compatibility for systemd
+- Add systemd service
+
 * Thu Dec 28 2017 Julio Gonzalez <git@juliogonzalez.es> - 3.6.2.01-1
 - Start using Fedora/RHEL release conventions
 - Fix problems on RPM removals
