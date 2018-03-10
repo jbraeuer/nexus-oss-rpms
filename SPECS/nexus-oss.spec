@@ -11,7 +11,7 @@
 
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus
-Version: 2.14.6.02
+Version: 2.14.7.01
 Release: 1%{?dist}
 # This is a hack, since Nexus versions are N.N.N-NN, we cannot use hyphen inside Version tag
 # and we need to adapt to Fedora/SUSE guidelines
@@ -23,7 +23,7 @@ Source0: http://www.sonatype.org/downloads/%{name}-%{nversion}-bundle.tar.gz
 Source1: %{name}.service
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(pre): /usr/sbin/useradd, /usr/bin/getent
-Requires: java >= 1.8.0
+Requires: java >= 1.7.0
 AutoReqProv: no
 
 %description
@@ -74,10 +74,10 @@ sed -i -e 's/wrapper.logfile=.*/wrapper.logfile=\/var\/log\/%{name}\/%{name}.log
 # Also it is possible that despite 1.8.0 is installed, it is not the default version, so we check
 # for it
 JAVA_MAJOR_VERSION=$(java -version 2>&1 | head -n 1 | cut -d'"' -f2 | cut -d'.' -f2)
-if [ "${JAVA_MAJOR_VERSION}" != "8" ]; then
-  echo "WARNING! Default java version does not seem to be 1.8!"
-  echo "Keep in mind that Nexus3 is only compatible with Java 1.8.0 at the moment!"
-  echo "Tip: Check if 1.8 is installed and use (as root):"
+if [ "${JAVA_MAJOR_VERSION}" != "7" -a  "${JAVA_MAJOR_VERSION}" != "8" ]; then
+  echo "WARNING! Default java version does not seem to be neither 1.7 or 1.8!"
+  echo "Keep in mind that Nexus is only compatible with Java 1.7.0 and 1.8.0 at the moment!"
+  echo "Tip: Check if 1.7 or 1.8 is installed and use (as root):"
   echo "update-alternatives --config java"
   echo "to adjust the default version to be used"
 fi
@@ -120,6 +120,11 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+%changelog
+* Sat Mar 10 2018 Julio Gonzalez <git@juliogonzalez.es> - 2.14.7.01-1
+- Update to 2.14.7-01
+- Compatibility with Java 1.7.0 is restored
+
 * Sat Mar 10 2018 Julio Gonzalez <git@juliogonzalez.es> - 2.14.6.02-1
 - Update to 2.14.6-02
 
