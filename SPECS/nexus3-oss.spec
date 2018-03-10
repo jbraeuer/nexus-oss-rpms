@@ -11,7 +11,7 @@
 
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus3
-Version: 3.8.0.02
+Version: 3.9.0.01
 Release: 1%{?dist}
 # This is a hack, since Nexus versions are N.N.N-NN, we cannot use hyphen inside Version tag
 # and we need to adapt to Fedora/SUSE guidelines
@@ -123,6 +123,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Sat Mar 10 2018 Julio Gonzalez <git@juliogonzalez.es> - 3.9.0.01-1
+- Update to Nexus 3.9.0-01
+
 * Sat Mar 10 2018 Julio Gonzalez <git@juliogonzalez.es> - 3.8.0.02-1
 - Update to Nexus 3.8.0-02
 
