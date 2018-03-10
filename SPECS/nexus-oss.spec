@@ -11,7 +11,7 @@
 
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus
-Version: 2.14.7.01
+Version: 2.14.8.01
 Release: 1%{?dist}
 # This is a hack, since Nexus versions are N.N.N-NN, we cannot use hyphen inside Version tag
 # and we need to adapt to Fedora/SUSE guidelines
@@ -120,6 +120,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Sat Mar 10 2018 Julio Gonzalez <git@juliogonzalez.es> - 2.14.8.01-1
+- Update to 2.14.8-01
+
 * Sat Mar 10 2018 Julio Gonzalez <git@juliogonzalez.es> - 2.14.7.01-1
 - Update to 2.14.7-01
 - Compatibility with Java 1.7.0 is restored
