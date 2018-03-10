@@ -120,7 +120,6 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
-%changelog
 * Sat Mar 10 2018 Julio Gonzalez <git@juliogonzalez.es> - 2.14.7.01-1
 - Update to 2.14.7-01
 - Compatibility with Java 1.7.0 is restored
