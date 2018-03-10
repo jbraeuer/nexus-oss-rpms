@@ -11,8 +11,8 @@
 
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus
-Version: 2.14.5.02
-Release: 2%{?dist}
+Version: 2.14.6.02
+Release: 1%{?dist}
 # This is a hack, since Nexus versions are N.N.N-NN, we cannot use hyphen inside Version tag
 # and we need to adapt to Fedora/SUSE guidelines
 %define nversion %(echo %{version}|sed -r 's/(.*)\\./\\1-/')
@@ -120,6 +120,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Sat Mar 10 2018 Julio Gonzalez <git@juliogonzalez.es> - 2.14.6.02-1
+- Update to 2.14.6-02
+
 * Sat Dec 30 2017 Anton Patsev <patsev.anton@gmail.com> - 2.14.5.02-2
 - Stop requiring sysvinit compatibility for systemd
 - Add systemd service
