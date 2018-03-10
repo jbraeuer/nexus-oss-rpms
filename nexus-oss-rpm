@@ -58,7 +58,7 @@ case ${VERSION} in
      URL="http://download.sonatype.com/nexus/3/nexus-${VERSION}-unix.tar.gz"
      TGZ="nexus3-${VERSION}-unix.tar.gz"
      SPECS='nexus3-oss.spec';;
-  2|'') VERSION="2.14.5-02"
+  2|'') VERSION="2.14.6-02"
         URL="http://www.sonatype.org/downloads/nexus-${VERSION}-bundle.tar.gz"
         TGZ="nexus-${VERSION}-bundle.tar.gz"
         SPECS='nexus-oss.spec';;
