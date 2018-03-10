@@ -11,7 +11,7 @@
 
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus3
-Version: 3.7.1.02
+Version: 3.8.0.02
 Release: 1%{?dist}
 # This is a hack, since Nexus versions are N.N.N-NN, we cannot use hyphen inside Version tag
 # and we need to adapt to Fedora/SUSE guidelines
@@ -70,6 +70,10 @@ sed -i -e 's/karaf.bootstrap.log=.*/karaf.bootstrap.log=\/var\/log\/%{name}\/kar
 sed -i -e 's/<File>${karaf.data}\/log\/nexus.log<\/File>/<File>\/var\/log\/%{name}\/%{name}.log<\/File>/' $RPM_BUILD_ROOT/usr/share/%{name}/etc/logback/logback.xml
 sed -i -e 's/<File>${karaf.data}\/log\/request.log<\/File>/<File>\/var\/log\/%{name}\/request.log<\/File>/' $RPM_BUILD_ROOT/usr/share/%{name}/etc/logback/logback-access.xml
 
+# Support Jetty upgrade from 9.3 to 9.4
+sed -i -e '/<Set name="selectorPriorityDelta"><Property name="jetty.http.selectorPriorityDelta" default="0"\/><\/Set>/d' $RPM_BUILD_ROOT/usr/share/%{name}/etc/jetty/jetty-http.xml
+sed -i -e '/<Set name="selectorPriorityDelta"><Property name="jetty.http.selectorPriorityDelta" default="0"\/><\/Set>/d' $RPM_BUILD_ROOT/usr/share/%{name}/etc/jetty/jetty-https.xml
+
 # Since java is a virtual package, we can only check that >= 1.8.0 is installed, but not < 1.9
 # Also it is possible that despite 1.8.0 is installed, it is not the default version, so we check
 # for it
@@ -119,6 +123,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Sat Mar 10 2018 Julio Gonzalez <git@juliogonzalez.es> - 3.8.0.02-1
+- Update to Nexus 3.8.0-02
+
 * Tue Jan 02 2018 Julio Gonzalez <git@juliogonzalez.es> - 3.7.1.02-1
 - Update to Nexus 3.7.1-02
 
