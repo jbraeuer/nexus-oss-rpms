@@ -123,6 +123,9 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Sat May 26 2018 Anton Patsev <patsev.anton@gmail.com> - 3.12.0.01-1
+- Update to Nexus 3.12.0-01
+
 * Fri May 11 2018 Anton Patsev <patsev.anton@gmail.com> - 3.11.0.01-1
 - Update to Nexus 3.11.0-01
 
