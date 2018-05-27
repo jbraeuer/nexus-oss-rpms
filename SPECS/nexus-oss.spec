@@ -19,7 +19,7 @@ Release: 1%{?dist}
 License: AGPL
 Group: unknown
 URL: http://nexus.sonatype.org/
-Source0: http://www.sonatype.org/downloads/%{name}-%{nversion}-bundle.tar.gz
+Source0: http://www.sonatype.org/downloads/%{name}-2.14.8-01-bundle.tar.gz
 Source1: %{name}.service
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(pre): /usr/sbin/useradd, /usr/bin/getent

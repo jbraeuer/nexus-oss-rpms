@@ -19,7 +19,7 @@ Release: 1%{?dist}
 License: AGPL
 Group: unknown
 URL: http://nexus.sonatype.org/
-Source0: http://download.sonatype.com/nexus/3/%{name}-%{nversion}-unix.tar.gz
+Source0: http://download.sonatype.com/nexus/3/nexus-3.12.0-01-unix.tar.gz
 Source1: %{name}.service
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(pre): /usr/sbin/useradd, /usr/bin/getent

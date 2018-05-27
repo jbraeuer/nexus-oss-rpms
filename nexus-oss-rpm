@@ -33,7 +33,8 @@ function create_build_env() {
 
 function get_sources() {
   if [ ! -f "./SOURCES/${2}" ]; then
-    curl -s -L "${1}" -o "./SOURCES/${2}"
+    echo "Downloading ${1} to "./SOURCES/${2}"..."
+    curl -L "${1}" -o "./SOURCES/${2}"
   fi
 }
 
@@ -56,7 +57,7 @@ shift $((OPTIND-1))
 case ${VERSION} in
   3) VERSION="3.12.0-01"
      URL="http://download.sonatype.com/nexus/3/nexus-${VERSION}-unix.tar.gz"
-     TGZ="nexus3-${VERSION}-unix.tar.gz"
+     TGZ="nexus-${VERSION}-unix.tar.gz"
      SPECS='nexus3-oss.spec';;
   2|'') VERSION="2.14.8-01"
         URL="http://www.sonatype.org/downloads/nexus-${VERSION}-bundle.tar.gz"
