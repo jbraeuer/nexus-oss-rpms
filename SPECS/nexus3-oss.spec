@@ -11,6 +11,7 @@
 
 Summary: Nexus manages software “artifacts” required for development, deployment, and provisioning.
 Name: nexus3
+# Remember to adjust the version at Source0 as well. This is required for Open Build Service download_files service
 Version: 3.12.0.01
 Release: 1%{?dist}
 # This is a hack, since Nexus versions are N.N.N-NN, we cannot use hyphen inside Version tag
