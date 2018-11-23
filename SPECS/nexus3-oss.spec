@@ -124,7 +124,7 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
-* Fri Oct 29 2018 Wojciech Urbański <mail@wurbanski.me> - 3.14.0.04-1
+* Mon Oct 29 2018 Wojciech Urbański <mail@wurbanski.me> - 3.14.0.04-1
 - Update to Nexus 3.14.0-04
 
 * Tue Sep 4 2018 Wojciech Urbański <mail@wurbanski.me> - 3.13.0.01-1
