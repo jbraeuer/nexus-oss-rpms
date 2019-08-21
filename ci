@@ -6,7 +6,7 @@ LANG=en_EN
 SCRIPT=$(basename ${0})
 
 # Supported distributions
-SUPPORTEDDISTROS='centos6 centos7 amazon2017.03 opensuse15.1'
+SUPPORTEDDISTROS='centos6 centos7 amazon2018.03 opensuse15.1'
 
 # Supported Nexus major versions
 NEXUSMAJORVERS='2 3'
@@ -136,7 +136,7 @@ case "${DISTRO}" in
   centos7)       DOCKER_IMAGE='juliogonzalez/centos7-nexus:latest'
                  DOCKER_PRIVILEGED='--privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro'
                  START_CMD="/usr/bin/systemctl start ${PACKAGE_NAME}";;
-  amazon2017.03) DOCKER_IMAGE='juliogonzalez/amazon2017.03-nexus:latest'
+  amazon2018.03) DOCKER_IMAGE='juliogonzalez/amazon2018.03-nexus:latest'
                  START_CMD="/etc/init.d/${PACKAGE_NAME} start";;
   opensuse15.1)  DOCKER_IMAGE='juliogonzalez/opensuse15.1-nexus:latest'
                  DOCKER_PRIVILEGED='--privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro'

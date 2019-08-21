@@ -1,4 +1,4 @@
-FROM amazonlinux:2017.03 
+FROM amazonlinux:2018.03 
 MAINTAINER Julio Gonzalez Gil <git@juliogonzalez.es>
 
 USER root

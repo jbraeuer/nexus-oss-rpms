@@ -19,5 +19,5 @@ Tested on:
 
 - CentOS6 x86_64
 - CentOS7 x86_64
-- Amazon Linux 2017.03
+- Amazon Linux 2018.03
 - openSUSE Leap 15.1
