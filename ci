@@ -6,7 +6,7 @@ LANG=en_EN
 SCRIPT=$(basename ${0})
 
 # Supported distributions
-SUPPORTEDDISTROS='centos6 centos7 amazon2017.03 opensuse42.3'
+SUPPORTEDDISTROS='centos6 centos7 amazon2017.03 opensuse15.1'
 
 # Supported Nexus major versions
 NEXUSMAJORVERS='2 3'
@@ -138,7 +138,7 @@ case "${DISTRO}" in
                  START_CMD="/usr/bin/systemctl start ${PACKAGE_NAME}";;
   amazon2017.03) DOCKER_IMAGE='juliogonzalez/amazon2017.03-nexus:latest'
                  START_CMD="/etc/init.d/${PACKAGE_NAME} start";;
-  opensuse42.3)  DOCKER_IMAGE='juliogonzalez/opensuse42.3-nexus:latest'
+  opensuse15.1)  DOCKER_IMAGE='juliogonzalez/opensuse15.1-nexus:latest'
                  DOCKER_PRIVILEGED='--privileged -v /sys/fs/cgroup:/sys/fs/cgroup:ro'
                  START_CMD="/usr/bin/systemctl start ${PACKAGE_NAME}";;
   *)             print_error_unsupported_distro

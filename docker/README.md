@@ -5,7 +5,7 @@ Current distributions available:
 * CentOS 6
 * CentoS 7
 * Amazon Linux 2017.03
-* OpenSuse 42.3
+* openSUSE Leap 15.1
 
 # Building images
 

@@ -20,4 +20,4 @@ Tested on:
 - CentOS6 x86_64
 - CentOS7 x86_64
 - Amazon Linux 2017.03
-- openSUSE 42.3
+- openSUSE Leap 15.1
