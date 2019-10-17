@@ -1,4 +1,9 @@
-[![Build Status](https://jenkins.juliogonzalez.es/job/nexus-oss-rpms-build/badge/icon)](https://jenkins.juliogonzalez.es/job/nexus-oss-rpms-build/)
+# Build status
+
+Nexus2: [![Build Status](https://jenkins.juliogonzalez.es/job/nexus2-oss-rpms-build/badge/icon)](https://jenkins.juliogonzalez.es/job/nexus2-oss-rpms-build/)
+Nexus3: [![Build Status](https://jenkins.juliogonzalez.es/job/nexus3-oss-rpms-build/badge/icon)](https://jenkins.juliogonzalez.es/job/nexus3-oss-rpms-build/)
+
+# Introduction
 
 This repository holds files and scripts to build Sonatype Nexus 2.x and 3.x RPM packages. It also has required stuff to perform Continuous Integration.
 
