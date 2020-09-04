@@ -169,6 +169,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Sat Sep  5 2020 Julio González Gil <packages@juliogonzalez.es> - 3.27.0.03-1
+- Update to Nexus 3.27.0-03
 - Bigfixes:
  * NEXUS-24298: Yum proxy needs to be more lenient about gzip encoding
  * NEXUS-24464: NuGet Signature validation goes out to https://api.nuget.org
