@@ -170,26 +170,26 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sat Sep  5 2020 Julio González Gil <packages@juliogonzalez.es> - 3.27.0.03-1
 - Update to Nexus 3.27.0-03
-- Bigfixes:
- * NEXUS-24298: Yum proxy needs to be more lenient about gzip encoding
- * NEXUS-24464: NuGet Signature validation goes out to https://api.nuget.org
- * NEXUS-24691: OCI annotations result in errors
- * NEXUS-24802: Spurious warnings logged when running reconcile task against group blob store
- * NEXUS-24837: Metadata query cache age and Maximum metadata age timeouts are ignored for metadata requests
- * NEXUS-24869: Moving away from the Logging page asks "Unsaved changes"
- * NEXUS-24901: some rpms in a yum hosted repo are not added to a rebuilt hosted repo primary.xml metadata file
- * NEXUS-24917: npm audit fails for packages that are not all lowercase
- * NEXUS-24925: Unneeded JSESSIONID cookies returned
- * NEXUS-24988: Snapshot remover deletes GAV level maven-metadata.xml files, resulting in 404 responses
- * NEXUS-25019: CVE-2020-24622: S3 secret key can be exposed by admin user
+- Bugfixes:
+  * NEXUS-24298: Yum proxy needs to be more lenient about gzip encoding
+  * NEXUS-24464: NuGet Signature validation goes out to https://api.nuget.org
+  * NEXUS-24691: OCI annotations result in errors
+  * NEXUS-24802: Spurious warnings logged when running reconcile task against group blob store
+  * NEXUS-24837: Metadata query cache age and Maximum metadata age timeouts are ignored for metadata requests
+  * NEXUS-24869: Moving away from the Logging page asks "Unsaved changes"
+  * NEXUS-24901: some rpms in a yum hosted repo are not added to a rebuilt hosted repo primary.xml metadata file
+  * NEXUS-24917: npm audit fails for packages that are not all lowercase
+  * NEXUS-24925: Unneeded JSESSIONID cookies returned
+  * NEXUS-24988: Snapshot remover deletes GAV level maven-metadata.xml files, resulting in 404 responses
+  * NEXUS-25019: CVE-2020-24622: S3 secret key can be exposed by admin user
 - Improvements:
- * NEXUS-10471: Allow deployment to Docker group repositories (PRO only)
- * NEXUS-21118: remove reference to deprecated Jetty socket linger time soLingerTime
- * NEXUS-25098: REST API for Conda repositories
+  * NEXUS-10471: Allow deployment to Docker group repositories (PRO only)
+  * NEXUS-21118: remove reference to deprecated Jetty socket linger time soLingerTime
+  * NEXUS-25098: REST API for Conda repositories
 
 * Sun Aug 16 2020 Julio González Gil <packages@juliogonzalez.es> - 3.26.1.02-1
 - Update to Nexus 3.26.1.04-1
-- Bigfixes:
+- Bugfixes:
   * NEXUS-24867: Fix an issue starting server when multiple SSL certificates are present in the configured keystore.
 
 * Tue Aug 11 2020 Julio González Gil <packages@juliogonzalez.es> - 3.26.0.04-1
