@@ -22,7 +22,7 @@
 Summary: Nexus manages software "artifacts" and repositories for them
 Name: nexus3
 # Remember to adjust the version at Source0 as well. This is required for Open Build Service download_files service
-Version: 3.28.1.01
+Version: 3.29.0.02
 Release: 1%{?dist}
 # This is a hack, since Nexus versions are N.N.N-NN, we cannot use hyphen inside Version tag
 # and we need to adapt to Fedora/SUSE guidelines
@@ -30,7 +30,7 @@ Release: 1%{?dist}
 License: EPL-2.0
 Group: Development/Tools/Other
 URL: http://nexus.sonatype.org/
-Source0: http://download.sonatype.com/nexus/3/nexus-3.28.1-01-unix.tar.gz
+Source0: http://download.sonatype.com/nexus/3/nexus-3.29.0-02-unix.tar.gz
 Source1: %{name}.service
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(pre): /usr/sbin/useradd, /usr/bin/getent
@@ -168,7 +168,96 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
-* Tue Oct 28 2020 Julio González Gil <packages@juliogonzalez.es> - 3.28.1.01-1
+* Sat Dec  5 2020 Julio González Gil <packages@juliogonzalez.es> - 3.29.0.02-1
+- Update to Nexus 3.29.0-02
+- Bugfixes:
+  * NEXUS-16575: Raw repo url returns Error 404
+  * NEXUS-19840: /service/metrics/healthcheck returns 500 status code if
+                 a single healthcheck fails. It is deprecated now and
+                 scheduled for removal.  It is recommended to use the
+                 alternative endpoint /service/rest/v1/status/check which has a
+                 near equivalent JSON response, except it does not return 500
+                 status when one or more system status checks fail
+  * NEXUS-23733: Creating more than one file based blobstore using the same
+                 root path is not prevented
+  * NEXUS-23827: PACKAGES.gz cannot be updated if repository doesn't allow
+                 redeploy
+  * NEXUS-24331: deployment of rpm to a single directory causes metadata
+                 rebuild for entire repository
+  * NEXUS-24913: npm audit caching prevents policy updates
+  * NEXUS-25105: HTTP 500 response when attempting to delete LDAP user via
+                 REST API
+  * NEXUS-25116: Getting Metadata hashes via a Maven group returns 404
+                 Not found
+  * NEXUS-25147: Rebuild metadata task leaves sha256 and sha512 files untouched
+                 for metadata files
+  * NEXUS-25158: HeaderPatternFilter may reject implicit Host value due to
+                 certain combinations of X-Forwarded headers
+  * NEXUS-25186: possible that requests abruptly terminating will not appear in
+                 request.log
+  * NEXUS-25291: NuGet V3 Proxy can be configured only using a specific remote
+                 in UI field
+  * NEXUS-25292: Bad blob file reference breaks repository export
+  * NEXUS-25304: Health check details can fail with NPE if IQ server is setup
+                 but disabled
+  * NEXUS-25357: NuGet Proxy does not work with some third-party V3
+                 repositories
+  * NEXUS-25420: NXRM to NXRM Nuget v3 proxying still results in direct
+                 requests to nuget.org
+  * NEXUS-25464: Blob reference not updated in asset after change repository
+  * NEXUS-25478: Nuget V3 Group packages incorrectly sorted in page causing
+                 some installs to fail
+  * NEXUS-25502: yum metadata is rebuilt after downloading it which can cause
+                 build failures
+  * NEXUS-25510: Error Response Code 429 (Rate Limiting) does not autoblock
+  * NEXUS-25521: Encoded proxy URL causes startup failure
+  * NEXUS-25527: Crowd "Verify connection" button deletes all inputted values
+  * NEXUS-25529: Security management: Users API does not show "externalRoles"
+                 for Crowd
+  * NEXUS-25575: Password Validator Message not shown when changing your
+                 password.
+  * NEXUS-25604: Some newly deployed rpm files not showing up in
+                 primary.xml.gz, despite logging saying they are being added
+  * NEXUS-25605: Proxy repositories to github package registry can fail query
+                 requests when accessed in a group repository
+  * NEXUS-25609: Exception processing payloads for a single NuGet group member
+                 repository can stop all group member processing
+  * NEXUS-25628: yum metadata missing provides entries when multiple versions
+                 are provided by a package
+  * NEXUS-25650: Nexus-3-0 Develop Violations - 10/29/20 12:15 AM
+  * NEXUS-25775: WARN messages WebResourceServiceImpl - Overlapping resources
+                 on path /static/img/sonatype-logo-with-hexagon.png
+  * NEXUS-25829: CVE-2020-29436: Fixes an XXE Vulnerability
+  * NEXUS-25830: ClassCastException Long cannot be cast to Date for NuGet v3
+                 registrations index
+  * NEXUS-25928: Nexus-3-0 Develop Violations - 11/19/20 12:14 AM
+- Improvements:
+  * NEXUS-14631: Add more attributes to REST resource for asset
+  * NEXUS-19021: Nothing is logged at default levels when roles are added or
+                 removed
+  * NEXUS-20267: only allow the most secure cipher suites and TLS protocol
+                 versions for inbound HTTPS connections by default. See also
+                 NEXUS-25786 below.
+  * NEXUS-25307: Protect against deletion of related blob stores while the
+                 Change Repo Blob Store task is executing
+  * NEXUS-23331: Add the support of helm push plugin
+  * NEXUS-25423: Add caching of catalog dates for npm component queries to IQ
+  * NEXUS-25424: Add configuration for Orient's "network.binary.maxLength"
+  * NEXUS-25506: change the Remote URL of the default nuget.org-proxy proxy
+                 repository to api version 3 compatible https://api.nuget.org/v3/index.json.
+                 Applies only to new installations. Upgrading will not modify
+                 any existing remote URLs, although users are encouraged to
+                 start migrating away from using NuGet V2 API URLs such as the
+                 previous default (https://www.nuget.org/api/v2/).
+  * NEXUS-25774: upgrade Eclipse Jetty to 9.4.33.v20201020
+  * NEXUS-25786: explicitly disable TLS 1.0 and 1.1 for inbound HTTPS
+                 connections by default. Only applies to Eclipse Jetty-based
+                 direct inbound HTTPS connections (no reverse proxy).
+                 You are encouraged to use the new settings, but if for some
+                 reason you still the new TLS versions or cipher suites, check
+                 https://support.sonatype.com/hc/en-us/articles/213465098
+
+* Wed Oct 28 2020 Julio González Gil <packages@juliogonzalez.es> - 3.28.1.01-1
 - Update to Nexus 3.28.1-01
 - Bugfixes:
   * NEXUS-25507: Fixed an issue that caused the Change repository blob store task
