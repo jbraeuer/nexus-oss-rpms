@@ -7,8 +7,8 @@ USER root
 ARG UID=500
 ARG GID=500
 
-# Create the wrappers to check for updates and to keep the container running
-ADD files/*.sh /opt/
+# Add the wrapper to check for updates and the systemd replacement
+ADD files/* /opt/
 
 # Pass the output of date command as DATE argument if you want 
 # make sure that the image is generated using the lastest 
@@ -16,15 +16,17 @@ ADD files/*.sh /opt/
 ARG DATE=None
 
 # Generate a list of original packages, update, install needed
-# packages and create symlink for qmake-qt5
+# packages and replace systemd
 RUN rpm -qa --qf "%{NAME}\n" > /opt/packages-image.txt && \
     zypper -q refresh && \
     zypper -q -n update && \
     zypper -q -n install \
      curl \
      java-1.8.0 \
+     python3 \
      rpm-build \
      systemd-sysvinit && \
+    cp /opt/systemctl3.py /usr/bin/systemctl && \
     zypper -q clean -a # ${DATE}
 
 # Create ci group and user according to arguments UID/GID
