@@ -169,7 +169,7 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
-* Tue Jun 22 2022 Julio González Gil <packages@juliogonzalez.es> - 3.39.0.01-1
+* Wed Jun 22 2022 Julio González Gil <packages@juliogonzalez.es> - 3.39.0.01-1
 - Update to Nexus 3.39.0-01
 - Bugfixes:
   * NEXUS-22810: Content selector creation REST API does not check for
