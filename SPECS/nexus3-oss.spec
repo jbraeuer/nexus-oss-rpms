@@ -22,7 +22,7 @@
 Summary: Nexus manages software "artifacts" and repositories for them
 Name: nexus3
 # Remember to adjust the version at Source0 as well. This is required for Open Build Service download_files service
-Version: 3.40.1.01
+Version: 3.41.1.01
 Release: 1%{?dist}
 # This is a hack, since Nexus versions are N.N.N-NN, we cannot use hyphen inside Version tag
 # and we need to adapt to Fedora/SUSE guidelines
@@ -30,7 +30,7 @@ Release: 1%{?dist}
 License: EPL-2.0
 Group: Development/Tools/Other
 URL: http://nexus.sonatype.org/
-Source0: http://download.sonatype.com/nexus/3/nexus-3.40.1-01-unix.tar.gz
+Source0: http://download.sonatype.com/nexus/3/nexus-3.41.1-01-unix.tar.gz
 Source1: %{name}.service
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root
 Requires(pre): /usr/sbin/useradd, /usr/bin/getent
@@ -169,6 +169,68 @@ rm -rf $RPM_BUILD_ROOT
 %endif
 
 %changelog
+* Thu Aug 25 2022 Julio González Gil <packages@juliogonzalez.es> - 3.41.1.01-1
+- Update to Nexus 3.41.1-01
+- Bugfixes:
+  * NEXUS-34642: Fix for a critical bug that can cause cleanup policies to
+                  unintentionally delete binaries in Nexus Repository Pro
+                  deployments which use H2 or PostgreSQL
+                  See https://help.sonatype.com/repomanager3/product-information/critical-cleanup-policy-bug-advisory
+
+* Thu Aug 25 2022 Julio González Gil <packages@juliogonzalez.es> - 3.41.0.01-1
+- Update to Nexus 3.41.0-01
+- Bugfixes:
+  * NEXUS-24499: PyPI Package with single letter names cause 404 to
+                 be returned
+  * NEXUS-27383: Adding helm charts leaves tmp files behind in tmp dir
+                 of blobstore
+  * NEXUS-31314: REST API for Docker Host repo can't GET, POST and PUT Allow
+                 redeploy only on 'latest' tag as UI
+  * NEXUS-31512: Race condition during maven-metadata.xml deployment can cause
+                 invalid blob references and 500 response for subsequent
+                 GET requests
+  * NEXUS-31761: DB migrator allows users to connect to the already
+                 opened database
+  * NEXUS-31970: npm group dist-tags endpoint merges duplicate npm tagged
+                 versions using highest semantic version instead of first
+                 group member resolved version
+  * NEXUS-32034: IQ Server Page Allows Password Interception on Save/Verify
+  * NEXUS-32580: db migrator attempts to drop existing SQL database tables by
+                 default and can fail
+  * NEXUS-32613: Can not install specific versions because of broken index
+                 type assets for PyPI hosted repository caused by
+                 Reconcile task
+  * NEXUS-32634: Import of ubuntu:22.04 docker image fails with error
+  * NEXUS-32658: Using REST API to create the same repository twice causes
+                 InvalidStateException
+  * NEXUS-33290: DB migrator: ClassCastException when
+                 attributes.content.last_modified is 0
+  * NEXUS-33541: Integrity check option of Repair - Reconcile component
+                 database from blob store task may delete blobs migrated
+                 from OrientDB
+  * NEXUS-33584: /repository/<repo_name> is not included in the request.log
+                 log line when sub-domain routing feature is used
+  * NEXUS-33613: Nexus System API UI is broken when context path is used
+  * NEXUS-33733: Cannot create externally mapped role for SAML
+  * NEXUS-33795: Add debug logging to remove member from blob store group task
+  * NEXUS-33919: NullPointerException on "Purge unused snapshots" task
+  * NEXUS-33931: cannot create an Azure Blob Store using REST API and
+                 environment variable authentication option
+  * NEXUS-33949: GA level maven metadata files intermittently lose
+                 most versions
+  * NEXUS-34020: Deleting tag results in disassociation attempt against
+                 all components
+- Improvements:
+  * NEXUS-24127: PyPI repos should provide SHA256 hashes in /simple
+                 web interface
+  * NEXUS-33413: Migrating large database takes many hours
+  * New Optional Database Migrator Parameters
+    See https://help.sonatype.com/repomanager3/installation-and-upgrades/migrating-to-a-new-database#MigratingtoaNewDatabase-OptionalParametersOptionalParam
+  * New Admin - delete blobstore temporary files Task
+    If you find that you have excess tmp files for a blobstore, manually
+    schedule and use this task to easily delete all of the tmp files
+    (.bytes and .properties) in a selected blobstore's /tmp folder
+
 * Tue Jun 28 2022 Julio González Gil <packages@juliogonzalez.es> - 3.40.1.01-1
 - Update to Nexus 3.40.1-01
 - Bugfixes:
