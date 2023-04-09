@@ -91,7 +91,7 @@ update_image() {
   ${CENGINE} build --pull --build-arg UID=${UID} --build-arg GID=${GID} --build-arg DATE=${DATE} ${NOCACHE} -t ${IMAGE_NAME} ${BASE_DIR}/${DISTRO}/
 }
 
-ARGS=$(getopt -o h --long help,action:,distributions:,docker,registry:,user:,password:,errorcodes -n "${SCRIPT}" -- "$@")
+ARGS=$(getopt -o h --long help,action:,distributions:,docker,registry:,username:,password:,errorcodes -n "${SCRIPT}" -- "$@")
 if [ $? -ne 0 ];
 then
   print_incorrect_syntax
