@@ -173,7 +173,8 @@ rm -rf $RPM_BUILD_ROOT
 * Sat May  6 2023 Julio González Gil <packages@juliogonzalez.es> - 3.53.0.01-1
 - Update to Nexus 3.53.0-01
 - Bugfixing:
-                performance issues installing gems
+  * NEXUS-17626: rubygems /versions endpoint not implemented resulting in
+                 performance issues installing gems
   * NEXUS-20429: incomplete gem metadata returned sometimes from
                 /api/v1/dependencies
   * NEXUS-25408: Using 0 in "Authenticated user status interval" disables
