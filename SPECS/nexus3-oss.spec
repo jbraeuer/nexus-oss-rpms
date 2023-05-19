@@ -171,6 +171,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %changelog
 * Sat May 13 2023 Julio González Gil <packages@juliogonzalez.es> - 3.53.1.02-1
+- Update to Nexus 3.53.1-02
 - Bugfixing:
   * NEXUS-39091: Concurrent event handling and asynchronous processing works
                  as expected for RubyGems
